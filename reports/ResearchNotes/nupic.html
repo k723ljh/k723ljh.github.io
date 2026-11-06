@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[연구노트] NUPIC 개념 설명</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff; --panel:#ffffff; --panel-2:#f6f8fa; --line:#d0d7de;
+    --text:#1f2328; --muted:#59636e; --dim:#8c959f;
+    --accent:#0969da; --accent-soft:rgba(9,105,218,.07);
+    --gold:#9a6700; --green:#1a7f37; --red:#cf222e; --red-soft:rgba(207,34,46,.07);
+    --teal:#1b998b; --amber:#e3901c;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:Inter,"Noto Sans KR","Malgun Gothic",system-ui,sans-serif;font-size:14.5px;line-height:1.65}
+  a{color:var(--accent)}
+  header{padding:26px 28px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .badge{font:600 10px/1 "IBM Plex Mono",monospace;letter-spacing:.12em;color:var(--accent);
+    border:1px solid var(--accent);border-radius:4px;padding:4px 6px;display:inline-block}
+  h1{margin:12px 0 6px;font:700 24px/1.35 "Noto Serif KR",serif}
+  .meta{color:var(--muted);font-size:13px}
+  .meta b{color:var(--text);font-weight:600}
+  nav.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;flex-wrap:wrap;padding:10px 28px;
+    background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+  nav.tabs a{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);
+    padding:4px 12px;border-radius:20px}
+  nav.tabs a:hover{color:var(--text);border-color:var(--accent)}
+  main{max-width:1080px;margin:0 auto;padding:24px 28px 60px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px 26px;
+    margin-bottom:20px;overflow-x:auto;scroll-margin-top:60px}
+  h2{margin:0 0 14px;font:700 19px "Noto Serif KR",serif;display:flex;align-items:center;gap:10px}
+  h2 .k{font:600 11px "IBM Plex Mono",monospace;color:var(--accent);border:1px solid var(--accent);
+    border-radius:4px;padding:3px 6px;letter-spacing:.08em}
+  h3{font-size:14.5px;margin:20px 0 8px;color:var(--gold)}
+  ul{margin:6px 0;padding-left:20px} li{margin:4px 0}
+  .note{font-size:12.5px;color:var(--muted)}
+  .key{background:var(--accent-soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:6px;margin:14px 0}
+  .warn{background:var(--red-soft);border-left:3px solid var(--red);padding:12px 16px;border-radius:6px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr))}
+  .grid>*{min-width:0}
+  .card{border:1px solid var(--line);border-radius:8px;padding:13px 15px;background:var(--panel-2)}
+  .card .t{font-weight:600;margin-bottom:4px}
+  .card .s{color:var(--muted);font-size:13px}
+  .stat{text-align:center}
+  .stat .v{font:700 26px "IBM Plex Mono",monospace;color:var(--gold);line-height:1.25}
+  .stat .l{font-size:12.5px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+  th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  thead th{color:var(--accent);font-weight:600;border-bottom:1px solid var(--accent);background:var(--panel-2)}
+  .bad{color:var(--red);font-weight:600}
+  .good{color:var(--green);font-weight:600}
+  .chart{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:6px 4px 2px}
+  .chart svg{display:block;width:100%;height:auto}
+  .legend{font-size:12px;color:var(--dim);margin-top:4px}
+  .steps{display:grid;gap:8px}
+  .step{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start}
+  .step .n{background:var(--amber);color:#111;border-radius:50%;width:26px;height:26px;display:flex;
+    align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .step .b{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--panel-2)}
+  .timeline{border-left:2px solid var(--line);margin-left:6px;padding-left:18px}
+  .tl{position:relative;margin-bottom:10px}
+  .tl::before{content:"";position:absolute;left:-25px;top:6px;width:10px;height:10px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--accent)}
+  .tl.now::before{background:var(--accent)}
+  .tl .d{font-weight:600}
+  .pill{display:inline-block;font:600 10.5px "IBM Plex Mono",monospace;padding:2px 7px;border-radius:10px;
+    background:var(--accent);color:#fff;margin-left:6px;vertical-align:middle}
+  .prio{display:inline-block;font:600 10.5px "IBM Plex Mono",monospace;padding:2px 7px;border-radius:4px;margin-right:6px}
+  .p1{background:var(--red);color:#fff}.p2{background:#d4a72c;color:#1f2328}.p3{background:var(--dim);color:#fff}
+  .issue{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:14px 16px;margin:10px 0}
+  .issue .q{font-weight:600;margin-bottom:6px}
+  .issue .row{display:grid;grid-template-columns:62px 1fr;gap:8px;font-size:13.5px;margin:3px 0}
+  .issue .row span:first-child{color:var(--dim);font:600 11.5px "IBM Plex Mono",monospace;padding-top:2px}
+  footer{text-align:center;color:var(--dim);font-size:12px;padding:0 0 40px}
+  @media (max-width:640px){main{padding:16px 12px 40px}section{padding:16px 14px}header{padding:20px 16px 14px}nav.tabs{padding:8px 12px}}
+</style>
+<style>
+  .refs a{text-decoration:none;font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+  .refs a:hover{text-decoration:underline}
+  td.l,th.l{text-align:left}
+  .tag{display:inline-block;font:600 10.5px "IBM Plex Mono",monospace;padding:2px 7px;border-radius:4px}
+  .tag.non{background:var(--red);color:#fff}
+  .tag.ok{background:var(--green);color:#fff}
+  .tag.fu{background:var(--dim);color:#fff}
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:10px;margin:10px 0}
+  .flow .f{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--panel-2);position:relative}
+  .flow .f b{display:block;color:var(--accent);font-size:12px;font-family:"IBM Plex Mono",monospace;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="badge">연구노트 · NUPIC</span>
+  <h1>NUPIC 개념 설명<br>원전 공급자 공동감사와 NRC 벤더 검사</h1>
+  <div class="meta">근거 자료: <b>NRC 벤더 검사보고서 23건 · 검사매뉴얼(IMC) 3건 · 검사절차(IP) 3건</b> · 마지막 업데이트 <b>2026-11-06</b></div>
+</header>
+<nav class="tabs">
+  <a href="#summary">한눈에 보기</a><a href="#what">NUPIC이란</a><a href="#why">왜 필요한가</a>
+  <a href="#reg">규제 근거</a><a href="#audit">감사 방식</a><a href="#nrc">NRC와의 관계</a>
+  <a href="#cases">검사 사례</a><a href="#lessons">시사점</a><a href="#terms">용어</a><a href="#refs">첨부 자료</a>
+</nav>
+
+<main>
+
+<section id="summary">
+  <h2><span class="k">01</span>한눈에 보기</h2>
+  <div class="key">
+    <b>NUPIC(Nuclear Procurement Issues Corporation)</b>은 원전 운영사들이 함께 만든 <b>공급자 공동감사 조직</b>입니다.
+    회원사 대표들이 한 팀을 꾸려 공급자를 한 번 감사하고, 그 결과를 모든 회원사가 함께 씁니다.
+    회원사는 이 결과로 각자 <b>승인 공급자 목록(ASL)</b>을 관리합니다. 원전 운영사가 공급자를 평가해야 한다는
+    <b>10 CFR 50 부록 B 기준 VII</b>를 효율적으로 지키는 방법입니다.
+  </div>
+  <div class="grid g4">
+    <div class="card stat"><div class="v">1989</div><div class="l">설립 (기존 감사 그룹 통합)</div></div>
+    <div class="card stat"><div class="v">3년</div><div class="l">공급자 정기 감사 주기</div></div>
+    <div class="card stat"><div class="v">18</div><div class="l">부록 B 품질보증 기준 수</div></div>
+    <div class="card stat"><div class="v">9 / 23</div><div class="l">첨부 NRC 검사 중 부적합 통보(NON) 보고서</div></div>
+  </div>
+  <p class="note">설립 연도와 감사 주기는 업계에서 일반적으로 알려진 내용입니다. 통계 수치(9/23 등)는 첨부한 NRC 문서를 직접 집계한 값입니다.</p>
+</section>
+
+<section id="what">
+  <h2><span class="k">02</span>NUPIC이란</h2>
+  <div class="grid g2">
+    <div class="card"><div class="t">누가</div><div class="s">미국의 모든 원전 운영사와 해외 원전 운영사들이 회원입니다. 한국수력원자력도 해외 회원사로 참여하는 것으로 알려져 있습니다. 회원사의 품질보증(QA) 담당자들이 감사팀을 구성합니다.</div></div>
+    <div class="card"><div class="t">무엇을</div><div class="s">안전등급 기기, 부품, 서비스를 공급하는 업체(벤더)의 품질보증 프로그램이 실제로 잘 이행되는지 감사합니다. 상용품을 안전등급으로 전환하는 <b>상용등급품 품질검증(CGD)</b>을 위한 조사도 합니다.</div></div>
+    <div class="card"><div class="t">어떻게</div><div class="s">표준 체크리스트로 <b>공동감사(Joint Audit)</b>를 합니다. 감사 보고서는 회원사끼리 공유하고, 각 회원사는 이를 검토해 자사의 공급자 승인에 활용합니다.</div></div>
+    <div class="card"><div class="t">이름</div><div class="s">NRC 문서에서도 표기가 섞여 있습니다. IP 43004와 IMC 1245 부록 C8은 <i>Nuclear Procurement Issues <b>Committee</b></i>, IMC 2507은 <i>Nuclear Procurement Issues <b>Corporation</b></i>이라고 씁니다. 같은 조직입니다.</div></div>
+  </div>
+  <div class="warn"><b>주의:</b> NUPIC은 규제기관이 아닙니다. 운영사들의 자율 협력체입니다. 감사 결과를 써도 공급자 관리의 법적 책임은 <b>각 운영사</b>에게 남습니다.</div>
+</section>
+
+<section id="why">
+  <h2><span class="k">03</span>왜 필요한가</h2>
+  <p>원전 운영사는 안전 관련 물품을 사기 전에 공급자를 평가해야 합니다. 공급자 한 곳에 여러 운영사가 거래하면 같은 감사를 여러 번 받게 됩니다.</p>
+  <div class="grid g2">
+    <div class="card"><div class="t">NUPIC 이전</div><div class="s">운영사마다 따로 감사를 나갑니다. 공급자는 1년 내내 비슷한 감사를 반복해서 받습니다. 감사 품질과 기준도 운영사마다 다릅니다.</div></div>
+    <div class="card"><div class="t">NUPIC 이후</div><div class="s">한 번의 공동감사로 모든 회원사가 결과를 함께 씁니다. 체크리스트가 같아서 감사 기준이 일정해집니다. 운영사와 공급자 모두 비용과 인력이 줄어듭니다.</div></div>
+  </div>
+</section>
+
+<section id="reg">
+  <h2><span class="k">04</span>규제 근거</h2>
+  <h3>세 가지 핵심 규정</h3>
+  <table>
+    <thead><tr><th class="l">규정</th><th class="l">내용</th><th class="l">NUPIC과의 연결</th></tr></thead>
+    <tbody>
+      <tr><td class="l"><b>10 CFR 50 부록 B</b></td><td class="l">원전 품질보증 18개 기준</td><td class="l">감사 체크리스트의 뼈대입니다. 특히 기준 VII(구매품 관리)가 공급자 평가를 요구합니다.</td></tr>
+      <tr><td class="l"><b>10 CFR Part 21</b></td><td class="l">결함·불이행 보고 의무</td><td class="l">공급자가 결함을 평가하고 보고하는 체계가 있는지 감사합니다.</td></tr>
+      <tr><td class="l"><b>상용등급품 품질검증(CGD)</b></td><td class="l">상용품을 안전등급 기본 부품으로 전환</td><td class="l">NUPIC 상용등급 조사(Survey)가 CGD 판단 근거로 쓰입니다.</td></tr>
+    </tbody>
+  </table>
+  <h3>부록 B 18개 기준</h3>
+  <div class="grid g3" style="font-size:13px">
+    <div class="card">I 조직<br>II 품질보증 프로그램<br>III 설계 관리<br>IV 구매 문서 관리<br>V 지침·절차·도면<br>VI 문서 관리</div>
+    <div class="card"><b>VII 구매품·서비스 관리</b><br>VIII 자재 식별·관리<br>IX 특수공정 관리<br>X 검사<br>XI 시험 관리<br>XII 측정·시험장비 관리</div>
+    <div class="card">XIII 취급·저장·운송<br>XIV 검사·시험·운전 상태<br>XV 부적합품 관리<br>XVI 시정조치<br>XVII 품질보증 기록<br>XVIII 감사</div>
+  </div>
+</section>
+
+<section id="audit">
+  <h2><span class="k">05</span>감사 방식</h2>
+  <div class="flow">
+    <div class="f"><b>1 · 일정</b>회원사 수요를 모아 감사할 공급자와 일정을 정합니다.</div>
+    <div class="f"><b>2 · 팀 구성</b>주관 회원사가 팀장을 맡고 여러 회원사 감사원이 참여합니다.</div>
+    <div class="f"><b>3 · 현장 감사</b>표준 체크리스트로 부록 B, Part 21, CGD를 봅니다. 서류만 보지 않고 실제 제작품과 공정을 확인합니다.</div>
+    <div class="f"><b>4 · 결과 공유</b>보고서와 지적사항을 회원사끼리 공유합니다.</div>
+    <div class="f"><b>5 · 회원사 판단</b>각 회원사가 보고서를 검토해 ASL 등재 여부를 결정합니다.</div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><div class="t">공동감사 (Joint Audit)</div><div class="s">부록 B 품질보증 프로그램을 가진 공급자가 대상입니다. 보통 3년마다 하고, 그 사이에는 매년 공급자 성과를 평가합니다.</div></div>
+    <div class="card"><div class="t">상용등급 조사 (Commercial-Grade Survey)</div><div class="s">부록 B 프로그램이 없는 상용 공급자가 대상입니다. 특정 품목의 <b>핵심 특성</b>을 공급자가 제대로 관리하는지 확인합니다. CGD 방법 중 하나입니다.</div></div>
+  </div>
+  <p class="note">IP 43004는 운영사가 NUPIC 같은 제3자 조사 보고서를 쓸 때 확인할 점을 정합니다. 조사 절차와 체크리스트, 감사원 자격을 검토해 받아들였는지, 조사 범위가 구매 품목의 핵심 특성을 포함하는지 등입니다.</p>
+</section>
+
+<section id="nrc">
+  <h2><span class="k">06</span>NRC와의 관계</h2>
+  <p>NRC는 공급자를 직접 검사하기도 하고, NUPIC 감사가 제대로 되는지도 감독합니다.</p>
+  <table>
+    <thead><tr><th class="l">문서</th><th class="l">NUPIC 관련 내용</th></tr></thead>
+    <tbody>
+      <tr><td class="l"><b>IMC 2507</b> 벤더 검사</td><td class="l">NRC는 NUPIC 같은 제3자 감사를 정기적으로 감독합니다. 목적은 감사가 부록 B 기준 VII를 충족하는지 확인하는 것입니다. NRC 검사과(IQVB)가 <b>1년에 약 두 번</b> NUPIC 감사를 참관합니다. NRC 검사에서 NUPIC 감독이 부족하다는 신호가 나오면 NUPIC과 협의합니다.</td></tr>
+      <tr><td class="l"><b>IP 43004</b> CGD 프로그램 검사</td><td class="l">운영사가 NUPIC 조사 결과를 쓸 때 조사 절차, 체크리스트, 감사원을 검토해 받아들였는지 확인합니다.</td></tr>
+      <tr><td class="l"><b>IMC 1245 부록 C8</b> 벤더 검사관 교육</td><td class="l">신입 검사관은 NUPIC 담당 연락관이 누구인지 알아야 합니다. 검사 준비 때 NUPIC 보고서를 검토하고, NUPIC 감사 참관 시 유의할 점을 배웁니다.</td></tr>
+      <tr><td class="l"><b>IMC 0617</b> 검사보고서 작성</td><td class="l">보고서 양식에 NUPIC 감사 참관 같은 추가 정보를 적는 칸이 있습니다.</td></tr>
+    </tbody>
+  </table>
+  <div class="key"><b>정리:</b> NUPIC은 <b>운영사 쪽</b> 공급자 관리 수단입니다. NRC 벤더 검사는 <b>규제기관 쪽</b> 확인 수단입니다. 두 체계는 같은 기준(부록 B, Part 21)으로 공급자를 보고, NRC는 NUPIC 감사 자체도 감독합니다.</div>
+</section>
+
+<section id="cases">
+  <h2><span class="k">07</span>NRC 벤더 검사 사례 (2019–2020)</h2>
+  <p>첨부1의 검사보고서 23건을 정리했습니다. 9건에서 <b>부적합 통보(NON)</b> 10건이 나왔습니다. 나머지 14건은 중요한 지적사항이 없었습니다.</p>
+  <table>
+    <thead><tr><th class="l">보고서</th><th class="l">공급자</th><th class="l">검사 기간</th><th class="l">검사 대상</th><th class="l">결과</th></tr></thead>
+    <tbody>
+      <tr><td class="l">ML19059A231</td><td class="l">Westinghouse (New Stanton, PA)</td><td class="l">2019.01.28–02.01</td><td class="l">AP1000 무정전전원(UPS) 시험</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML19065A287</td><td class="l">HydroAire (Chicago, IL)</td><td class="l">2019.01.28–02.01</td><td class="l">안전등급 펌프 설계·제작·시험</td><td class="l"><span class="tag non">NON</span> 압력계를 전체 사용범위(0–7000 psig)로 교정하지 않음 (기준 XII)</td></tr>
+      <tr><td class="l">ML19080A112</td><td class="l">Westinghouse (Cranberry, PA)</td><td class="l">2019.02.25–28</td><td class="l">핵연료 열전도도 저하(TCD) 모델링, 보안정보</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML19107A502</td><td class="l">Tioga Pipe (Easton, PA)</td><td class="l">2019.03.25–29</td><td class="l">배관·피팅·플랜지 등 재료 공급</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML19116A256</td><td class="l">Framatome Creusot Forge (프랑스)</td><td class="l">2019.03.11–15</td><td class="l">2016 MDEP 검사 후속, 단조품 기록 이상 정리</td><td class="l"><span class="tag fu">후속·지적 없음</span></td></tr>
+      <tr><td class="l">ML19116A264</td><td class="l">AREVA NP Creusot Forge (프랑스)</td><td class="l">2019.03.11–15</td><td class="l">위와 같은 후속 검사 (AREVA NP 대상)</td><td class="l"><span class="tag fu">후속·지적 없음</span></td></tr>
+      <tr><td class="l">ML19150A640</td><td class="l">L&amp;S Machine (Latrobe, PA)</td><td class="l">2019.05.06–10</td><td class="l">핵연료집합체 부품 제작</td><td class="l"><span class="tag non">NON</span> 2017 NRC 지적사항 시정조치 미이행 (기준 XVI)</td></tr>
+      <tr><td class="l">ML19175A138</td><td class="l">AZZ Nuclear | NLI (Fort Worth, TX)</td><td class="l">2019.05.20–24</td><td class="l">설계·기기검증, CGD, 부적합 관리</td><td class="l"><span class="tag non">NON</span> 계전기 환경검증 시험의 활성화 에너지 근거 부족 (기준 III)</td></tr>
+      <tr><td class="l">ML19193A237</td><td class="l">Arcos Industries (Mount Carmel, PA)</td><td class="l">2019.06.10–14</td><td class="l">안전등급 용접재료</td><td class="l"><span class="tag non">NON</span> 내부감사 지적 7건을 시정조치에 넣지 않음 (기준 XVI)</td></tr>
+      <tr><td class="l">ML19239A422</td><td class="l">Curtiss-Wright Enertech (Brea, CA)</td><td class="l">2019.07.22–26</td><td class="l">안전등급 부품 제작·시험</td><td class="l"><span class="tag non">NON</span> 단조품 상용 공급자를 제대로 평가하지 않고 구매 (기준 VII)</td></tr>
+      <tr><td class="l">ML19261A188</td><td class="l">Framatome Inc. (Lynchburg, VA)</td><td class="l">2019.06.24–28</td><td class="l">TCD, 원자로 상부헤드 초음파검사(N-729-4), 공급자 관리·CGD</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML19303D572</td><td class="l">GE Hitachi (Wilmington, NC)</td><td class="l">2019.09.16–19</td><td class="l">안전등급 제품·서비스, 보안정보</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML19331A615</td><td class="l">ENSA (스페인, MDEP 다국적 검사)</td><td class="l">2019.10.21–25</td><td class="l">기기 제작 (영국 ONR·프랑스 ASN 참여)</td><td class="l"><span class="tag non">NON</span> 액체침투탐상 검사를 자격 있는 절차대로 하지 않음 (기준 IX)</td></tr>
+      <tr><td class="l">ML19339F625</td><td class="l">Fisher Controls (Marshalltown, IA)</td><td class="l">2019.11.04–08</td><td class="l">밸브·구동기 설계·제작 (불시 검사)</td><td class="l"><span class="tag non">NON ×2</span> 546NS 변환기의 내진·환경 검증 부족 (기준 III)</td></tr>
+      <tr><td class="l">ML20021A269</td><td class="l">Bechtel Power (Reston, VA)</td><td class="l">2019.12.09–12</td><td class="l">엔지니어링·설계변경·구매·시공 서비스</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML20024G416</td><td class="l">Rosemount Nuclear (Chanhassen, MN)</td><td class="l">2019.12.09–12</td><td class="l">압력·차압 전송기</td><td class="l"><span class="tag non">NON</span> 방사선 조사시험 조건이 적절하지 않음 (기준 III)</td></tr>
+      <tr><td class="l">ML20035E477</td><td class="l">Westinghouse CFFF (Hopkins, SC)</td><td class="l">2020.01.13–16</td><td class="l">핵연료집합체 제작</td><td class="l"><span class="tag non">NON</span> 상단 노즐 핀 용접(GTAW) 특수공정 관리 미흡 (기준 IX)</td></tr>
+      <tr><td class="l">ML20079K185</td><td class="l">Sargent &amp; Lundy (Chicago, IL)</td><td class="l">2020.02.24–28</td><td class="l">엔지니어링, 안전등급 소프트웨어</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML20083H560</td><td class="l">Framatome Inc. (Lynchburg, VA)</td><td class="l">2020.03.10</td><td class="l">2019 검사 후속, Palisades 초음파검사 절차 시정조치</td><td class="l"><span class="tag fu">후속·지적 없음</span></td></tr>
+      <tr><td class="l">ML20086N781</td><td class="l">Westinghouse (New Stanton, PA)</td><td class="l">2020.02.18–21</td><td class="l">AP1000 UPS 시험 (2019 후속 범위)</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML20097F449</td><td class="l">EnerSys (Reading, PA)</td><td class="l">2020.02.24–28</td><td class="l">안전등급 축전지</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML20097J376</td><td class="l">ASCO (Aiken, SC)</td><td class="l">2020.03.09–13</td><td class="l">안전등급 밸브</td><td class="l"><span class="tag ok">지적 없음</span></td></tr>
+      <tr><td class="l">ML20216A590</td><td class="l">Valcor Engineering (Springfield, NJ)</td><td class="l">2020.07.13–17</td><td class="l">2017 NON 시정조치 확인 (원격 검사, Vogtle 3·4 ITAAC)</td><td class="l"><span class="tag fu">후속·지적 없음</span></td></tr>
+    </tbody>
+  </table>
+  <h3>부적합 통보(NON)가 나온 기준</h3>
+  <table style="max-width:560px">
+    <thead><tr><th class="l">부록 B 기준</th><th>NON 수</th><th class="l">공급자</th></tr></thead>
+    <tbody>
+      <tr><td class="l">III 설계 관리 (검증 시험)</td><td>4</td><td class="l">NLI, Fisher ×2, Rosemount</td></tr>
+      <tr><td class="l">IX 특수공정 관리</td><td>2</td><td class="l">ENSA, Westinghouse CFFF</td></tr>
+      <tr><td class="l">XVI 시정조치</td><td>2</td><td class="l">L&amp;S, Arcos</td></tr>
+      <tr><td class="l">VII 구매품 관리</td><td>1</td><td class="l">Enertech</td></tr>
+      <tr><td class="l">XII 측정·시험장비 관리</td><td>1</td><td class="l">HydroAire</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="lessons">
+  <h2><span class="k">08</span>시사점</h2>
+  <ul>
+    <li><b>기기검증 시험이 가장 많이 걸렸습니다.</b> 환경·내진·방사선 검증에서 시험 조건이나 근거가 부족하면 설계 관리(기준 III) 위반이 됩니다. 서류상 "시험 완료"만으로는 부족합니다.</li>
+    <li><b>시정조치는 끝까지 닫아야 합니다.</b> L&amp;S는 이전 NRC 지적, Arcos는 자체 내부감사 지적을 처리하지 않아 NON을 받았습니다. 감사 지적은 시정조치 체계에 넣고 효과까지 확인해야 합니다.</li>
+    <li><b>하위 공급자 관리가 NUPIC의 핵심 영역입니다.</b> Enertech 사례처럼 상용 공급자를 제대로 평가하지 않으면 기준 VII 위반입니다. NUPIC 감사와 상용등급 조사가 바로 이 부분을 다룹니다.</li>
+    <li><b>현장 공정을 직접 봅니다.</b> ENSA와 Westinghouse CFFF의 NON은 검사관이 용접·비파괴검사를 직접 참관하다 나왔습니다. NUPIC도 성과 중심(performance-based) 감사로 현장 확인을 중시합니다.</li>
+    <li><b>국내 관점:</b> 미국 원전에 기기를 공급하려는 국내 업체는 NUPIC 감사와 NRC 벤더 검사를 모두 대비해야 합니다. 위 사례는 대비할 때 좋은 점검 목록이 됩니다.</li>
+  </ul>
+</section>
+
+<section id="terms">
+  <h2><span class="k">09</span>용어 정리</h2>
+  <table>
+    <thead><tr><th class="l">용어</th><th class="l">뜻</th></tr></thead>
+    <tbody>
+      <tr><td class="l">ASL (Approved Suppliers List)</td><td class="l">운영사가 안전등급 품목을 살 수 있다고 승인한 공급자 목록</td></tr>
+      <tr><td class="l">Basic Component</td><td class="l">10 CFR Part 21의 안전 기능을 하는 기본 부품. 상용품도 CGD를 거치면 기본 부품이 될 수 있음</td></tr>
+      <tr><td class="l">CGD (Commercial-Grade Dedication)</td><td class="l">상용등급품의 핵심 특성을 검증해 안전등급 기본 부품으로 받아들이는 절차</td></tr>
+      <tr><td class="l">NON (Notice of Nonconformance)</td><td class="l">NRC가 공급자에게 보내는 부적합 통보. 공급자는 시정조치 계획을 회신해야 함</td></tr>
+      <tr><td class="l">NOV (Notice of Violation)</td><td class="l">위반 통보. 규정이 직접 적용되는 대상(운영사, Part 21 위반 등)에 발행</td></tr>
+      <tr><td class="l">IMC / IP</td><td class="l">NRC 검사매뉴얼 장(Inspection Manual Chapter) / 검사절차(Inspection Procedure)</td></tr>
+      <tr><td class="l">IQVB</td><td class="l">NRC 품질보증·벤더 검사과 (Quality Assurance and Vendor Inspection Branch)</td></tr>
+      <tr><td class="l">MDEP</td><td class="l">다국적 설계평가 프로그램. 여러 나라 규제기관이 함께 공급자를 검사함</td></tr>
+      <tr><td class="l">ITAAC</td><td class="l">신규 원전 건설 시 확인해야 할 검사·시험·분석과 합격 기준</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="refs" class="refs">
+  <h2><span class="k">10</span>첨부 자료 (NRC 공개 문서)</h2>
+  <p class="note">모두 NRC ADAMS에 공개된 문서입니다. 링크를 누르면 PDF가 새 창에서 열립니다.</p>
+  <h3>첨부2 · NRC 검사매뉴얼 (IMC)</h3>
+  <ul>
+    <li><a href="nupic_refs/imc/ML19337C706.pdf" target="_blank">ML19337C706</a> · IMC 2507 벤더 검사 (NUPIC 감독 07.03항)</li>
+    <li><a href="nupic_refs/imc/ML19191A163.pdf" target="_blank">ML19191A163</a> · IMC 0617 벤더·품질보증 검사보고서 작성 (2020.02.25 시행)</li>
+    <li><a href="nupic_refs/imc/ML19193A101.pdf" target="_blank">ML19193A101</a> · IMC 1245 부록 C8 벤더 검사관 교육·자격 (2020.03.27 시행)</li>
+  </ul>
+  <h3>첨부3 · NRC 벤더 검사절차 (IP)</h3>
+  <ul>
+    <li><a href="nupic_refs/ip/ML16344A102.pdf" target="_blank">ML16344A102</a> · IP 43002 원전 공급자 정기 검사</li>
+    <li><a href="nupic_refs/ip/ML16344A092.pdf" target="_blank">ML16344A092</a> · IP 43004 상용등급품 품질검증(CGD) 프로그램 검사</li>
+    <li><a href="nupic_refs/ip/ML19087A149.pdf" target="_blank">ML19087A149</a> · IP 36100 10 CFR Part 21 결함·불이행 보고 프로그램 검사</li>
+  </ul>
+  <h3>첨부1 · NRC 벤더 검사보고서 (23건)</h3>
+  <div class="grid g3" style="font-size:13px">
+    <div>
+      <a href="nupic_refs/vir/ML19059A231.pdf" target="_blank">ML19059A231</a> Westinghouse NS 2019<br>
+      <a href="nupic_refs/vir/ML19065A287.pdf" target="_blank">ML19065A287</a> HydroAire<br>
+      <a href="nupic_refs/vir/ML19080A112.pdf" target="_blank">ML19080A112</a> Westinghouse<br>
+      <a href="nupic_refs/vir/ML19107A502.pdf" target="_blank">ML19107A502</a> Tioga Pipe<br>
+      <a href="nupic_refs/vir/ML19116A256.pdf" target="_blank">ML19116A256</a> Framatome Creusot<br>
+      <a href="nupic_refs/vir/ML19116A264.pdf" target="_blank">ML19116A264</a> AREVA NP Creusot<br>
+      <a href="nupic_refs/vir/ML19150A640.pdf" target="_blank">ML19150A640</a> L&amp;S Machine<br>
+      <a href="nupic_refs/vir/ML19175A138.pdf" target="_blank">ML19175A138</a> AZZ Nuclear | NLI
+    </div>
+    <div>
+      <a href="nupic_refs/vir/ML19193A237.pdf" target="_blank">ML19193A237</a> Arcos Industries<br>
+      <a href="nupic_refs/vir/ML19239A422.pdf" target="_blank">ML19239A422</a> Curtiss-Wright Enertech<br>
+      <a href="nupic_refs/vir/ML19261A188.pdf" target="_blank">ML19261A188</a> Framatome Inc. 2019<br>
+      <a href="nupic_refs/vir/ML19303D572.pdf" target="_blank">ML19303D572</a> GE Hitachi<br>
+      <a href="nupic_refs/vir/ML19331A615.pdf" target="_blank">ML19331A615</a> ENSA (MDEP)<br>
+      <a href="nupic_refs/vir/ML19339F625.pdf" target="_blank">ML19339F625</a> Fisher Controls<br>
+      <a href="nupic_refs/vir/ML20021A269.pdf" target="_blank">ML20021A269</a> Bechtel Power<br>
+      <a href="nupic_refs/vir/ML20024G416.pdf" target="_blank">ML20024G416</a> Rosemount Nuclear
+    </div>
+    <div>
+      <a href="nupic_refs/vir/ML20035E477.pdf" target="_blank">ML20035E477</a> Westinghouse CFFF<br>
+      <a href="nupic_refs/vir/ML20079K185.pdf" target="_blank">ML20079K185</a> Sargent &amp; Lundy<br>
+      <a href="nupic_refs/vir/ML20083H560.pdf" target="_blank">ML20083H560</a> Framatome Inc. 2020<br>
+      <a href="nupic_refs/vir/ML20086N781.pdf" target="_blank">ML20086N781</a> Westinghouse NS 2020<br>
+      <a href="nupic_refs/vir/ML20097F449.pdf" target="_blank">ML20097F449</a> EnerSys<br>
+      <a href="nupic_refs/vir/ML20097J376.pdf" target="_blank">ML20097J376</a> ASCO<br>
+      <a href="nupic_refs/vir/ML20216A590.pdf" target="_blank">ML20216A590</a> Valcor Engineering
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>NUPIC 개념 설명 · 근거: NRC 공개 문서(ADAMS) · 2026-11-06</footer>
+</body>
+</html>

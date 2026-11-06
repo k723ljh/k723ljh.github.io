@@ -19,6 +19,12 @@
           "path": "reports/ResearchNotes/tds_istd.html",
           "date": "2026-11-06T00:00:00+09:00",
           "summary": "고TDS 시료 중 우라늄 분석 시 내부표준물질(Bi·Re·Tl) 회수율 저하와 매트릭스 영향 연구노트. 결과 요약, 비판적 검토, 추가 연구, 업데이트 로그."
+        },
+        {
+          "name": "NUPIC 개념 설명",
+          "path": "reports/ResearchNotes/nupic.html",
+          "date": "2026-11-06T00:00:00+09:00",
+          "summary": "원전 공급자 공동감사 조직 NUPIC의 개념, 규제 근거(10 CFR 50 부록 B·Part 21·CGD), 감사 방식, NRC 벤더 검사와의 관계, 2019–2020 NRC 벤더 검사보고서 23건 정리와 원문 PDF 첨부."
         }
       ]
     }
