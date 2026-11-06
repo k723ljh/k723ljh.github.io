@@ -1,0 +1,15 @@
+{
+  "groups": [
+    {
+      "name": "Research",
+      "files": [
+        {
+          "name": "논문 아카이브",
+          "path": "reports/Research/paper_archive.html",
+          "date": "2026-11-06T00:00:00+09:00",
+          "summary": "우라늄 센서(광학·전기화학) 리뷰와 Arsenazo III 디지털카메라 비색법 등 보관된 논문을 연도별·주제별로 검색하고, 구조화된 심층 요약을 한눈에 볼 수 있는 논문 아카이브."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0d1117; --side:#0f141d; --line:#232c3b; --text:#dbe2ec; --muted:#8b96a8; --dim:#5d6879; --accent:#6ea8fe; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:Inter, system-ui, sans-serif; }
+  body { display:flex; }
+  button { font:inherit; color:inherit; cursor:pointer; }
+  #sidebar { width:290px; flex:none; background:var(--side); border-right:1px solid var(--line); display:flex; flex-direction:column; transition:margin .2s; }
+  body.collapsed #sidebar { margin-left:-290px; }
+  .head { padding:22px 20px 16px; border-bottom:1px solid var(--line); }
+  .head-top { display:flex; justify-content:space-between; align-items:flex-start; }
+  .title { font:900 22px "Noto Serif KR", serif; }
+  .subtitle { font-size:12px; color:var(--muted); font-style:italic; margin-top:2px; }
+  .desc { font-size:12px; color:var(--dim); margin-top:12px; line-height:1.6; }
+  .toggle { background:none; border:1px solid var(--line); border-radius:6px; color:var(--muted); padding:3px 8px; font-size:11px; }
+  #nav { overflow-y:auto; padding:10px 0; flex:1; }
+  .group { display:flex; align-items:center; gap:6px; padding:10px 20px 6px; font-size:11px; font-weight:600; letter-spacing:.12em; color:var(--accent); text-transform:uppercase; cursor:pointer; user-select:none; }
+  .group .arrow { transition:transform .15s; } .group.open .arrow { transform:rotate(90deg); }
+  .files { display:none; } .files.open { display:block; }
+  .file { display:block; width:100%; text-align:left; background:none; border:0; border-left:2px solid transparent; padding:8px 20px 8px 30px; font-size:13px; color:var(--muted); line-height:1.45; }
+  .file:hover { color:var(--text); background:rgba(255,255,255,.03); }
+  .file.active { color:var(--text); border-left-color:var(--accent); background:rgba(110,168,254,.08); }
+  #content { flex:1; position:relative; }
+  iframe { border:0; width:100%; height:100%; display:none; }
+  #welcome { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--dim); font-size:13px; }
+  #welcome div { font:700 30px "Noto Serif KR", serif; color:var(--muted); margin-bottom:6px; }
+  #open-btn { position:fixed; top:12px; left:12px; display:none; background:var(--side); border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:12px; color:var(--muted); z-index:5; }
+  body.collapsed #open-btn { display:block; }
+</style>
+</head>
+<body>
+<button id="open-btn" title="메뉴 열기 (Ctrl+B)">☰ 메뉴</button>
+<nav id="sidebar">
+  <div class="head">
+    <div class="head-top">
+      <div><div class="title">Study Notes</div><div class="subtitle">ID-ICP-MS · Uranium Sensor</div></div>
+      <button class="toggle" id="close-btn" title="메뉴 접기 (Ctrl+B)">◀</button>
+    </div>
+    <div class="desc">논문 스터디 기록 보관소</div>
+  </div>
+  <div id="nav"></div>
+</nav>
+<main id="content">
+  <div id="welcome"><div>Study Notes</div>왼쪽 메뉴에서 보고서를 선택하세요</div>
+  <iframe id="frame" title="보고서"></iframe>
+</main>
+<script>
+  const frame = document.getElementById("frame"), welcome = document.getElementById("welcome"), nav = document.getElementById("nav");
+  let active = null;
+
+  const toggle = () => document.body.classList.toggle("collapsed");
+  document.getElementById("close-btn").onclick = toggle;
+  document.getElementById("open-btn").onclick = toggle;
+  addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") { e.preventDefault(); toggle(); } });
+
+  function open(path, el) {
+    active?.classList.remove("active");
+    active = el; el.classList.add("active");
+    welcome.style.display = "none"; frame.style.display = "block"; frame.src = path;
+    history.replaceState(null, "", "#" + path);
+  }
+
+  fetch("manifest.json").then(r => r.json()).then(({ groups }) => {
+    for (const g of groups) {
+      const head = document.createElement("div");
+      head.className = "group open";
+      head.innerHTML = '<span class="arrow">▸</span><span></span>';
+      head.lastChild.textContent = g.name;
+      const list = document.createElement("div");
+      list.className = "files open";
+      for (const f of g.files) {
+        const b = document.createElement("button");
+        b.className = "file"; b.textContent = f.name; b.title = f.summary || "";
+        b.onclick = () => open(f.path, b);
+        list.append(b);
+        if (location.hash.slice(1) === f.path) open(f.path, b);
+      }
+      head.onclick = () => { head.classList.toggle("open"); list.classList.toggle("open"); };
+      nav.append(head, list);
+    }
+  }).catch(() => { nav.innerHTML = '<div style="padding:16px 20px;font-size:12px;color:#5d6879">목록을 불러올 수 없어요.<br>로컬 서버로 열어 주세요.</div>'; });
+</script>
+</body>
+</html>

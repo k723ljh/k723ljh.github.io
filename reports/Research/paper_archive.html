@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>논문 아카이브</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #111722; --panel-2: #161d2a; --line: #232c3b;
+    --text: #dbe2ec; --muted: #8b96a8; --dim: #5d6879;
+    --accent: #6ea8fe; --accent-soft: rgba(110,168,254,.12);
+    --gold: #e3b341; --green: #56d364;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font-family: Inter, "Noto Sans KR", system-ui, sans-serif; font-size: 14px; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+
+  /* ---------- top bar ---------- */
+  header { height: 52px; display: flex; align-items: center; gap: 14px; padding: 0 18px;
+    border-bottom: 1px solid var(--line); background: var(--panel); }
+  .badge { font: 600 10px/1 "IBM Plex Mono", monospace; letter-spacing: .12em; color: var(--accent);
+    border: 1px solid var(--accent); border-radius: 4px; padding: 4px 6px; }
+  header h1 { margin: 0; font: 700 17px "Noto Serif KR", serif; white-space: nowrap; }
+  #search { flex: 1; max-width: 520px; margin-left: auto; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; padding: 8px 12px; color: var(--text); outline: none; }
+  #search:focus { border-color: var(--accent); }
+  .count { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .count b { color: var(--accent); font-size: 15px; }
+
+  /* ---------- layout ---------- */
+  main { display: grid; grid-template-columns: 380px 1fr; height: calc(100% - 52px); }
+  aside { border-right: 1px solid var(--line); overflow-y: auto; background: var(--panel); }
+  .filters { padding: 14px 16px 6px; border-bottom: 1px solid var(--line); }
+  .filters h4 { margin: 0 0 8px; font-size: 11px; font-weight: 600; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .chip { background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px;
+    padding: 4px 9px; font-size: 12px; color: var(--muted); }
+  .chip:hover { color: var(--text); }
+  .chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+  .list { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .item { text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; }
+  .item:hover { border-color: #33405a; }
+  .item.active { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+  .item .meta { display: flex; gap: 8px; align-items: center; font-size: 11px; color: var(--gold); margin-bottom: 6px; }
+  .yr { font: 600 10px "IBM Plex Mono", monospace; color: var(--accent); background: var(--accent-soft);
+    border-radius: 4px; padding: 2px 6px; }
+  .item .meta span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: italic; }
+  .item .ko { font: 700 14px/1.45 "Noto Serif KR", serif; margin-bottom: 4px; }
+  .item .en { font-size: 12px; color: var(--muted); line-height: 1.45; }
+  .item .tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
+  .empty { padding: 30px; text-align: center; color: var(--dim); }
+
+  /* ---------- detail ---------- */
+  section#detail { overflow-y: auto; padding: 28px 40px 60px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 22px 26px; margin-bottom: 22px; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .journal { font-size: 12px; color: var(--gold); font-style: italic; margin: 10px 0 8px; }
+  .card h2 { margin: 0 0 6px; font: 900 22px/1.4 "Noto Serif KR", serif; }
+  .card .en-title { color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 14px; }
+  .row { display: flex; gap: 10px; font-size: 13px; line-height: 1.5; margin-top: 6px; }
+  .row .k { flex: none; font-size: 11px; color: var(--dim); background: var(--panel-2); border-radius: 4px; padding: 2px 6px; height: fit-content; }
+  .row a { color: var(--accent); text-decoration: none; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .btn { background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 6px 11px; font-size: 12px; text-decoration: none; color: var(--text); white-space: nowrap; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .takeaway { margin-top: 16px; padding: 14px 16px; border-radius: 8px; background: rgba(227,179,65,.07);
+    border-left: 3px solid var(--gold); line-height: 1.7; font-size: 13.5px; }
+  .takeaway b { color: var(--gold); display: block; font-size: 11px; margin-bottom: 4px; letter-spacing: .05em; }
+
+  .md { line-height: 1.8; font-size: 14px; }
+  .md h3 { font: 700 17px "Noto Serif KR", serif; margin: 30px 0 10px; padding-left: 10px; border-left: 3px solid var(--accent); }
+  .md h3:first-child { margin-top: 0; }
+  .md strong { color: #fff; }
+  .md ul { padding-left: 20px; } .md li { margin: 4px 0; }
+  .md code { font: 12px "IBM Plex Mono", monospace; background: var(--panel-2); color: var(--gold); padding: 1px 5px; border-radius: 4px; }
+  .md table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13px; }
+  .md th, .md td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; }
+  .md th { background: var(--panel-2); color: var(--muted); font-weight: 600; }
+  .md blockquote { margin: 12px 0; padding: 8px 14px; border-left: 3px solid var(--dim); color: var(--muted); }
+  .placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--dim); }
+  .placeholder div { font: 700 26px "Noto Serif KR", serif; color: var(--muted); margin-bottom: 6px; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--green); color: #04130a; padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; grid-template-rows: 45% 55%; }
+    aside { border-right: 0; border-bottom: 1px solid var(--line); }
+    section#detail { padding: 18px; }
+    header h1 { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <span class="badge">RESEARCH ARCHIVE</span>
+  <h1>논문 아카이브</h1>
+  <input id="search" type="search" placeholder="논문 제목, 저자, 키워드, 내용 검색 (Ctrl + K)">
+  <span class="count">총 보관 <b id="total">0</b>편</span>
+</header>
+<main>
+  <aside>
+    <div class="filters">
+      <h4>연도별 필터</h4><div class="chips" id="years"></div>
+      <h4>주제별 태그</h4><div class="chips" id="tags"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </aside>
+  <section id="detail"><div class="placeholder"><div>논문 아카이브</div>왼쪽 목록에서 논문을 선택하세요</div></section>
+</main>
+<div class="toast" id="toast">인용 정보를 복사했어요</div>
+
+<script>
+// 내 컴퓨터(file://, localhost)에서 볼 때만 원문 PDF 버튼을 보여줍니다. 웹에 올리면 자동으로 숨겨집니다.
+const SHOW_SOURCE_LINKS = location.protocol === "file:" || ["localhost", "127.0.0.1"].includes(location.hostname);
+
+// ===================== 논문 데이터 =====================
+// 새 논문을 추가하려면 아래 배열에 같은 형식의 항목을 하나 더 넣으면 됩니다.
+const PAPERS = [
+{
+  id: "2023_baskaran_arsenazo_color_chart",
+  year: "2023",
+  ko_title: "디지털카메라용 다중표준 컬러차트를 이용한 음용수 중 총 우라늄 검출 (Arsenazo III)",
+  en_title: "Using a multistandard color chart guide for digital cameras to detect total uranium in drinking water using arsenazo III: an approach",
+  journal: "Journal of Radioanalytical and Nuclear Chemistry 332 (2023) 5071–5085",
+  authors: "Kamesh Viswanathan Baskaran, Abhijit Saha, Sandeep S. Ghugre",
+  doi: "10.1007/s10967-023-09222-7",
+  pdf: "Using-a-multistandard-color-chart-guide-for-digital-cameras-to-detect-total-uranium-in-drinking water using arsenazo.pdf",
+  tags: ["우라늄", "비색법", "Arsenazo III", "디지털카메라", "음용수", "ICP-MS 비교", "QA/QC"],
+  takeaway: "Arsenazo III–U(VI) 착물의 색을 분광광도계·DSLR·스마트폰으로 측정해 RGB/Lab ΔE 기반 '한 번 만들어 계속 쓰는' 다중표준 컬러차트를 개발함. 100배 농축 시 검출한계 DSLR 5 ng/mL로 WHO 기준(30 ng/mL)보다 낮으며, IAEA-312 표준물질 검증에서 DSLR의 U-score(0.08)가 ICP-MS(0.46)보다 우수해 고가 장비 없이 음용수 우라늄 감시가 가능함을 보임.",
+  summary_md: `### 1. 연구 배경 및 목적 (Research Problem & Objective)
+- **연구 배경**: 음용수 속 우라늄은 화학적 독성과 방사선 영향이 있어 WHO는 30 ng/mL, 인도 AERB·BIS는 60 ng/mL를 기준으로 둡니다. 알파분광, LSC, ICP-MS 등은 감도는 좋지만 비싸고, 방사화학 실험실과 반복적인 표준화가 필요합니다.
+- **핵심 문제 (Problem & Gap)**: 기존 Arsenazo III 비색법은 분광광도계 흡광도 기반이라 현장 휴대성이 없고, 카메라 기반 보고는 일회성 표준(one-time standard)에 그쳤으며 **QC·QA로 신뢰성을 검증한 사례가 없었습니다.**
+- **연구 목표**: Arsenazo III 기반 **다중표준 컬러차트**를 분광광도계(VS)·DSLR·모바일카메라(MC)로 만들고, 음용수 스파이크(QC)와 IAEA 표준물질(QA)로 ICP-MS와 정확도·정밀도를 비교합니다.
+
+### 2. 독창성 및 핵심 기여 (Novelty & Contribution)
+- Arsenazo III–우라늄 착물의 **Lab·RGB 색 값을 처음 보고**했습니다. 분광광도계에서는 분홍→보라, 카메라에서는 빨강→진한 빨강(단색조)으로 보입니다.
+- 표준화를 **한 번만 하면(n = 10) 디지털 색 데이터로 계속 쓰는** 컬러차트 개념을 제시했습니다.
+- 카메라 측정값을 ICP-MS와 **IAEA 기준**(U-score, 정밀도 지표)으로 직접 비교해, 색 분석이 정성 분석이 아니라 정량 분석이 될 수 있음을 보였습니다.
+
+### 3. 실험 방법 (Methodology)
+- **시약**: 0.07% Arsenazo III / 3 M HClO$_4$ 4 mL + 시료 1 mL (분석 부피 5 mL), pH 2에서 즉시 착물 형성
+- **표준**: U(VI) 0, 0.5, 1, 2.5, 5, 7.5, 10 µg/mL
+- **촬영**: 15 × 15 × 15 cm 나무 상자, 흰 여과지 배경, 플래시 광원, 큐벳까지 27.7 cm, 113 × 113 픽셀 크롭 → ImageJ로 평균 RGB
+- **색 거리**: 블랭크(b)와 시료(s) 사이의 거리
+  $$\\Delta E = \\sqrt{(R_s-R_b)^2+(G_s-G_b)^2+(B_s-B_b)^2}$$
+- **농도 환산**: $C = \\Delta E_{us} \\times \\dfrac{AV}{SV}$ (AV = 4 mL, SV = 1 mL)
+- **전처리**: 음용수 100 mL / 500 mL를 핫플레이트(100 °C, 약 8 h)로 농축 → 농축계수(PF) 100 / 500
+- **검증**: QC = 10, 50, 100 ng/mL 스파이크 회수율 / QA = IAEA-312 토양 표준물질 / 비교 장비 = ICP-MS (Thermo iCAP RQ, EPA 200.8)
+
+### 4. 주요 결과 (Key Results)
+| 항목 | Color-VS | DSLR | MC | ABS-VS | ICP-MS |
+|---|---|---|---|---|---|
+| 직선성 r² (RGB) | 0.997 | 0.997 | 0.982 | 0.999 | – |
+| 검출한계 (PF 100) | 6 ng/mL | **5 ng/mL** | 16 ng/mL | 7 ng/mL | – |
+| 검출한계 (PF 500) | 1 ng/mL | **0.9 ng/mL** | 3 ng/mL | – | – |
+| 회수율 (3개 시료) | 96.95 ± 13% | 97.6 ± 9.5% | 101.7 ± 12.7% | 80.7 ± 7.5% | 89.4 ± 5% |
+| IAEA U-score (진도) | – | **0.08** | 0.52 | – | 0.46 |
+| 상대 편향 | 10.39% | −2.77% | 9% | 29.26% | −5.8% |
+| 정밀도 (RSD) | 21.41% | 24% | 17.1% | 41% (불합격) | 13.83% |
+
+- 사람 눈은 ΔE > 2 정도부터 색 차이를 구분합니다. RGB는 0.5 µg/mL에서도 블랭크와 구분됐습니다.
+- 농축 없이 직접 측정하면 육안과 DSLR 모두 **500 ng/mL ~ 10 µg/mL** 범위를 판별할 수 있습니다.
+- 카메라 분석의 처리 시간은 약 5분입니다(시약 첨가 1분, 촬영 1분, 크롭 1분, 계산 2분). 단, 농축 단계에 시간이 가장 많이 걸립니다.
+- ABS-VS를 제외한 모든 방법이 IAEA 합격 기준을 만족했습니다.
+
+### 5. 한계 및 시사점 (Limitations & Implications)
+- **한계**: ppb 수준에 도달하려면 농축(약 8 h)이 반드시 필요합니다. 카메라는 회수율 오차 분포가 분광광도계보다 크고, 표준가산법 보정이 필요합니다. 실제 채취한 음용수는 모두 검출한계 미만이었습니다.
+- **ID-ICP-MS 스터디 관점**: ICP-MS가 **정밀도(RSD 13.83%)는 가장 좋았지만 진도(U-score)는 DSLR보다 낮았다**는 점은 플라즈마 이온화 간섭과 회수율 손실 문제를 보여줍니다. 동위원소희석(ID) 보정으로 이런 회수율 손실을 줄일 수 있다는 점과 연결해서 볼 만합니다.
+- **응용**: 재처리 시설, 광산, 원전 주변 환경 감시, 대학 일반 실험실의 음용수 모니터링`
+},
+{
+  id: "2019_wu_uranium_sensor_review",
+  year: "2019",
+  ko_title: "우라늄 검출용 센서 종합 리뷰: 광학·전기화학·기타 센서",
+  en_title: "Sensors for determination of uranium: A review",
+  journal: "Trends in Analytical Chemistry 118 (2019) 89–111",
+  authors: "Xumeng Wu, Qiuxiang Huang, Yu Mao, Xiangxue Wang, Yuyuan Wang, Qinghua Hu, Hongqing Wang, Xiangke Wang",
+  doi: "10.1016/j.trac.2019.04.026",
+  pdf: "Sensors for determination of uranium; A review.pdf",
+  tags: ["우라늄", "센서", "리뷰", "비색법", "형광", "전기화학", "DNAzyme", "나노소재", "Arsenazo III"],
+  takeaway: "우라닐 이온(UO₂²⁺) 센서를 신호 방식에 따라 광학(비색·UV-Vis·형광), 전기화학(전위차·전압전류·임피던스), 기타(SERS·SPR·RLS·무선자성)로 분류하고 검출 메커니즘과 검출한계를 비교한 리뷰. DNAzyme·나노소재 기반 센서가 선택성과 감도를 크게 끌어올렸지만(최저 0.1 pM), 간섭 이온(Th⁴⁺, V⁵⁺, Cu²⁺) 내성, 세포 내 위치 특이적 검출, 휴대형 현장 분석이 남은 과제임.",
+  summary_md: `### 1. 연구 배경 및 목적 (Research Problem & Objective)
+- **연구 배경**: 우라늄은 핵연료와 군수(열화우라늄탄, 전차 장갑)에 쓰이지만, 방사성과 화학적 독성으로 신장·간·뼈에 손상을 줍니다. 2011년 후쿠시마 사고 이후 각국이 원전 주변 감시를 강화했습니다.
+- **핵심 문제 (Problem & Gap)**: AAS, AES, XRF, 레이저 형광, ICP-MS 등은 감도는 높지만 **장비가 비싸고 전처리가 복잡해 현장·실시간 분석이 어렵습니다.**
+- **목표**: 우라닐 이온 센서 문헌을 신호 방식과 메커니즘별로 정리하고, 검출한계와 성능을 비교해 앞으로의 센서 설계 방향을 제시합니다.
+
+### 2. 센서 분류 체계 (Taxonomy)
+| 대분류 | 세부 방식 | 핵심 메커니즘 |
+|---|---|---|
+| 광학 | 비색법 (Colorimetry) | 발색 리간드, AuNP 응집/분산, ROS–TMB 산화 |
+| 광학 | UV-Vis 분광 | 저분자 리간드, 옵토드(Optode) 막 |
+| 광학 | 형광 (Fluorimetry) | PET, AIE, FRET, DNAzyme, G-quadruplex, MOF, 양자점 |
+| 광학 | 기타 분광 | 공명광산란(RLS), SERS, SPR |
+| 전기화학 | 전위차법 | 이온선택전극(ISE) |
+| 전기화학 | 전압전류법 | CV, DPV, SWV, 흡착 스트리핑(ASV) |
+| 전기화학 | 임피던스 | EIS |
+| 기타 | 무선 자성 센서 등 | WMS |
+
+### 3. 비색법 상세 (Colorimetry)
+- **발색 리간드**: Arsenazo III(C1), Br-PADAP(C2, 노랑→보라). 빠르지만 Cu²⁺, Co²⁺, Ni²⁺ 등 간섭 때문에 CyDTA, TEA 같은 차폐제가 필요합니다.
+  - C2를 셀룰로오스 아세테이트 나노섬유에 넣은 **pH 시험지형 스트립**: LOD $1.85 \\times 10^{-7}$ M
+  - C2 함유 이온각인고분자(U-IIP): 육안 LOD $3.7 \\times 10^{-9}$ M
+- **AuNP 응집 비색법**: 분산 상태는 빨강, 응집 상태는 파랑입니다. 우라닐 특이적 **DNAzyme**(rA 절단 부위)으로 선택성 문제를 해결했습니다.
+  - 비표지형: LOD $1 \\times 10^{-9}$ M, 6분 / 표지형: $5 \\times 10^{-8}$ M, 30분(현장에 더 적합)
+  - AuNP 촉매 은 환원 신호 증폭: LOD $4 \\times 10^{-11}$ M
+- **ROS–TMB 산화법**: 퍼옥시다아제나 광촉매로 만든 ROS가 TMB를 무색에서 파랑으로 산화시킵니다. 우라닐이 이 반응을 억제하거나 조절합니다. 감도와 선택성이 가장 좋지만 발색이 약해 추가 염료가 필요한 경우가 있습니다.
+
+### 4. 형광 · 전기화학 센서 요점
+- **형광**: 최근 10년 사이 빠르게 성장했고 **세포 내 이미징**까지 가능합니다. PET(turn-on/off), AIE(응집 시 발광 증가), FRET(DNAzyme–소광제 쌍) 방식이 대표적입니다.
+- **전기화학**: 전위차법은 가장 오래된 방식입니다. 스트리핑 전압전류법은 전극에 우라닐을 농축한 뒤 측정해 감도가 높습니다. 다만 신호를 읽으려면 측정 장비가 필요해 현장 실시간 분석에는 제약이 있습니다.
+- 그래핀 양자점처럼 **형광과 전기화학 특성을 함께 가진 소재**가 두 방식을 잇는 방향으로 제시됩니다.
+
+### 5. 남은 과제와 전망 (Challenges & Outlook)
+1. **간섭 이온 내성**: 아미독심 기반 센서는 V⁵⁺, 2·4좌 리간드는 Cu²⁺·Co²⁺ 간섭을 받습니다. 특히 **Th⁴⁺는 란탄족 수축 때문에 UO₂²⁺와 구분이 어렵습니다.**
+2. **생체 내 검출**: DNAzyme이나 Schiff base 형광 센서로 세포 이미징은 됐지만, 세포 내 **어느 구조**(소기관)에서 결합하는지는 아직 연구가 부족합니다.
+3. **초고감도**: 최저 LOD 0.1 pM($10^{-13}$ M)까지 보고됐지만, 대부분은 DNA 순환 증폭이나 AuNP·메조다공성 실리카 같은 복잡한 전략이 필요합니다. **휴대성·현장성과 함께 달성하는 것**이 과제입니다.
+
+### 6. 스터디 메모
+- 이 리뷰에서 비색법의 대표 시약인 **Arsenazo III**(C1)를 실제 음용수 분석에 적용하고 ICP-MS와 비교 검증한 후속 사례가 Baskaran et al. (2023)입니다. 두 논문을 함께 읽으면 좋습니다.
+- 센서 검출한계는 mol/L로 보고되는 경우가 많습니다. 우라늄(238 g/mol) 기준으로 $10^{-9}$ M ≈ 0.24 ng/mL(ppb)이므로, WHO 기준 30 ng/mL ≈ $1.3 \\times 10^{-7}$ M과 비교할 때 환산이 필요합니다.`
+}
+];
+// ======================================================
+
+const $ = (id) => document.getElementById(id);
+const state = { year: "전체", tag: "전체", q: "", active: null };
+
+function chip(label, group, n) {
+  const b = document.createElement("button");
+  b.className = "chip" + (state[group] === label ? " on" : "");
+  b.textContent = n != null ? `${label} (${n})` : (group === "tag" && label !== "전체" ? "#" + label : label);
+  b.onclick = () => { state[group] = label; render(); };
+  return b;
+}
+
+function renderFilters() {
+  const years = [...new Set(PAPERS.map(p => p.year))].sort().reverse();
+  const tags = [...new Set(PAPERS.flatMap(p => p.tags))].sort((a, b) => a.localeCompare(b, "ko"));
+  $("years").replaceChildren(chip("전체", "year", PAPERS.length), ...years.map(y => chip(y, "year")));
+  $("tags").replaceChildren(chip("전체", "tag"), ...tags.map(t => chip(t, "tag")));
+}
+
+function matches(p) {
+  if (state.year !== "전체" && p.year !== state.year) return false;
+  if (state.tag !== "전체" && !p.tags.includes(state.tag)) return false;
+  if (!state.q) return true;
+  const hay = [p.ko_title, p.en_title, p.authors, p.journal, p.takeaway, p.summary_md, p.tags.join(" ")].join(" ").toLowerCase();
+  return state.q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
+}
+
+function renderList() {
+  const items = PAPERS.filter(matches).sort((a, b) => b.year.localeCompare(a.year));
+  if (!items.length) { $("list").innerHTML = '<div class="empty">조건에 맞는 논문이 없어요</div>'; return; }
+  $("list").replaceChildren(...items.map(p => {
+    const el = document.createElement("button");
+    el.className = "item" + (state.active === p.id ? " active" : "");
+    el.innerHTML = `<div class="meta"><span class="yr">${p.year}</span><span></span></div>
+      <div class="ko"></div><div class="en"></div><div class="tags"></div>`;
+    el.querySelector(".meta span:last-child").textContent = p.journal;
+    el.querySelector(".ko").textContent = p.ko_title;
+    el.querySelector(".en").textContent = p.en_title;
+    el.querySelector(".tags").append(...p.tags.slice(0, 4).map(t => Object.assign(document.createElement("span"), { className: "tag", textContent: "#" + t })));
+    el.onclick = () => { state.active = p.id; render(); $("detail").scrollTop = 0; };
+    return el;
+  }));
+}
+
+// 마크다운 변환 중 수식($...$)이 깨지지 않도록 잠시 빼뒀다가 다시 넣습니다.
+function mdWithMath(src) {
+  const math = [];
+  const hold = src.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, m => `@@MATH${math.push(m) - 1}@@`);
+  return marked.parse(hold).replace(/@@MATH(\d+)@@/g, (_, i) => math[i].replace(/&/g, "&amp;").replace(/</g, "&lt;"));
+}
+
+function renderDetail() {
+  const p = PAPERS.find(x => x.id === state.active);
+  if (!p) return;
+  const pdfBtn = SHOW_SOURCE_LINKS && p.pdf ? `<a class="btn" target="_blank" href="../../../${encodeURI(p.pdf)}">원문 PDF</a>` : "";
+  $("detail").innerHTML = `
+    <div class="card">
+      <div class="card-top"><span class="yr">${p.year}</span>
+        <div class="actions">${pdfBtn}<a class="btn" target="_blank" href="https://doi.org/${p.doi}">DOI 열기</a><button class="btn" id="cite">인용 복사</button></div>
+      </div>
+      <div class="journal"></div><h2></h2><div class="en-title"></div>
+      <div class="row"><span class="k">저자</span><span class="authors"></span></div>
+      <div class="row"><span class="k">DOI</span><a target="_blank" href="https://doi.org/${p.doi}">${p.doi}</a></div>
+      <div class="takeaway"><b>핵심 요약</b><span class="tk"></span></div>
+    </div>
+    <div class="card md">${mdWithMath(p.summary_md)}</div>`;
+  const d = $("detail");
+  d.querySelector(".journal").textContent = p.journal;
+  d.querySelector("h2").textContent = p.ko_title;
+  d.querySelector(".en-title").textContent = p.en_title;
+  d.querySelector(".authors").textContent = p.authors;
+  d.querySelector(".tk").textContent = p.takeaway;
+  $("cite").onclick = () => {
+    navigator.clipboard.writeText(`${p.authors} (${p.year}). ${p.en_title}. ${p.journal}. https://doi.org/${p.doi}`);
+    $("toast").classList.add("show"); setTimeout(() => $("toast").classList.remove("show"), 1500);
+  };
+  if (window.renderMathInElement) renderMathInElement(d, { delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }], throwOnError: false });
+}
+
+function render() { renderFilters(); renderList(); renderDetail(); }
+
+$("total").textContent = PAPERS.length;
+$("search").addEventListener("input", e => { state.q = e.target.value.trim(); renderList(); });
+window.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); $("search").focus(); } });
+state.active = PAPERS[0].id;
+window.addEventListener("load", render);
+render();
+</script>
+</body>
+</html>
