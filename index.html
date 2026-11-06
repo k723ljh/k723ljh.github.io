@@ -6,7 +6,7 @@
 <title>Study Notes</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0d1117; --side:#0f141d; --line:#232c3b; --text:#dbe2ec; --muted:#8b96a8; --dim:#5d6879; --accent:#6ea8fe; }
+  :root { --bg:#ffffff; --side:#f6f8fa; --line:#d0d7de; --text:#1f2328; --muted:#59636e; --dim:#8c959f; --accent:#0969da; }
   * { box-sizing: border-box; }
   html, body { margin:0; height:100%; background:var(--bg); color:var(--text); font-family:Inter, system-ui, sans-serif; }
   body { display:flex; }
@@ -24,8 +24,8 @@
   .group .arrow { transition:transform .15s; } .group.open .arrow { transform:rotate(90deg); }
   .files { display:none; } .files.open { display:block; }
   .file { display:block; width:100%; text-align:left; background:none; border:0; border-left:2px solid transparent; padding:8px 20px 8px 30px; font-size:13px; color:var(--muted); line-height:1.45; }
-  .file:hover { color:var(--text); background:rgba(255,255,255,.03); }
-  .file.active { color:var(--text); border-left-color:var(--accent); background:rgba(110,168,254,.08); }
+  .file:hover { color:var(--text); background:rgba(9,105,218,.05); }
+  .file.active { color:var(--text); border-left-color:var(--accent); background:rgba(9,105,218,.08); }
   #content { flex:1; position:relative; }
   iframe { border:0; width:100%; height:100%; display:none; }
   #welcome { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--dim); font-size:13px; }
@@ -84,7 +84,7 @@
       head.onclick = () => { head.classList.toggle("open"); list.classList.toggle("open"); };
       nav.append(head, list);
     }
-  }).catch(() => { nav.innerHTML = '<div style="padding:16px 20px;font-size:12px;color:#5d6879">목록을 불러올 수 없어요.<br>로컬 서버로 열어 주세요.</div>'; });
+  }).catch(() => { nav.innerHTML = '<div style="padding:16px 20px;font-size:12px;color:#8c959f">목록을 불러올 수 없어요.<br>로컬 서버로 열어 주세요.</div>'; });
 </script>
 </body>
 </html>
