@@ -26,6 +26,9 @@
   .file { display:block; width:100%; text-align:left; background:none; border:0; border-left:2px solid transparent; padding:8px 20px 8px 30px; font-size:13px; color:var(--muted); line-height:1.45; }
   .file:hover { color:var(--text); background:rgba(9,105,218,.05); }
   .file.active { color:var(--text); border-left-color:var(--accent); background:rgba(9,105,218,.08); }
+  .group.sub { padding:8px 20px 6px 30px; font-size:12.5px; letter-spacing:.02em; text-transform:none; color:var(--muted); }
+  .group.sub:hover { color:var(--text); }
+  .files.sub .file { padding-left:48px; }
   #content { flex:1; position:relative; }
   iframe { border:0; width:100%; height:100%; display:none; }
   #welcome { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--dim); font-size:13px; }
@@ -66,24 +69,28 @@
     history.replaceState(null, "", "#" + path);
   }
 
-  fetch("manifest.json").then(r => r.json()).then(({ groups }) => {
-    for (const g of groups) {
-      const head = document.createElement("div");
-      head.className = "group open";
-      head.innerHTML = '<span class="arrow">▸</span><span></span>';
-      head.lastChild.textContent = g.name;
-      const list = document.createElement("div");
-      list.className = "files open";
-      for (const f of g.files) {
-        const b = document.createElement("button");
-        b.className = "file"; b.textContent = f.name; b.title = f.summary || "";
-        b.onclick = () => open(f.path, b);
-        list.append(b);
-        if (location.hash.slice(1) === f.path) open(f.path, b);
-      }
-      head.onclick = () => { head.classList.toggle("open"); list.classList.toggle("open"); };
-      nav.append(head, list);
+  function build(g, parent, depth) {
+    const sub = depth > 0 ? " sub" : "";
+    const head = document.createElement("div");
+    head.className = "group open" + sub;
+    head.innerHTML = '<span class="arrow">▸</span><span></span>';
+    head.lastChild.textContent = g.name;
+    const list = document.createElement("div");
+    list.className = "files open" + sub;
+    for (const f of g.files || []) {
+      const b = document.createElement("button");
+      b.className = "file"; b.textContent = f.name; b.title = f.summary || "";
+      b.onclick = () => open(f.path, b);
+      list.append(b);
+      if (location.hash.slice(1) === f.path) open(f.path, b);
     }
+    for (const s of g.groups || []) build(s, list, depth + 1);
+    head.onclick = () => { head.classList.toggle("open"); list.classList.toggle("open"); };
+    parent.append(head, list);
+  }
+
+  fetch("manifest.json").then(r => r.json()).then(({ groups }) => {
+    for (const g of groups) build(g, nav, 0);
   }).catch(() => { nav.innerHTML = '<div style="padding:16px 20px;font-size:12px;color:#8c959f">목록을 불러올 수 없어요.<br>로컬 서버로 열어 주세요.</div>'; });
 </script>
 </body>
