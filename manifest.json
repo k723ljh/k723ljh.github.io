@@ -31,6 +31,12 @@
           "path": "reports/ResearchNotes/appendix_b.html",
           "date": "2026-11-10T00:00:00+09:00",
           "summary": "원전 품질보증 18개 기준(Criterion I~XVIII)의 핵심 요구사항, 감사 증거, 흔한 지적. NUPIC 체크리스트 대응표와 NRC 벤더 검사 지적 사례."
+        },
+        {
+          "name": "부록 B 갭 분석 체크리스트",
+          "path": "reports/ResearchNotes/gap_checklist.html",
+          "date": "2026-11-10T00:00:00+09:00",
+          "summary": "공급사 QA 프로그램을 부록 B 18개 기준과 Part 21에 맞춰 점검하는 실무 체크리스트. 질문별 확인 증거, 판정·메모 저장, 결과 요약, CSV 내보내기."
         }
       ]
     }
