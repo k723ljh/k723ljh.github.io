@@ -25,6 +25,12 @@
           "path": "reports/ResearchNotes/nupic.html",
           "date": "2026-11-06T00:00:00+09:00",
           "summary": "원전 공급자 공동감사 조직 NUPIC의 개념, 규제 근거(10 CFR 50 부록 B·Part 21·CGD), 감사 방식, NRC 벤더 검사와의 관계, 2019–2020 NRC 벤더 검사보고서 23건 정리와 원문 PDF 첨부."
+        },
+        {
+          "name": "10 CFR 50 부록 B",
+          "path": "reports/ResearchNotes/appendix_b.html",
+          "date": "2026-11-10T00:00:00+09:00",
+          "summary": "원전 품질보증 18개 기준(Criterion I~XVIII)의 핵심 요구사항, 감사 증거, 흔한 지적. NUPIC 체크리스트 대응표와 NRC 벤더 검사 지적 사례."
         }
       ]
     }
