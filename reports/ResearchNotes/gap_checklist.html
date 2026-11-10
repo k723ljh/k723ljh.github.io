@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[연구노트] 부록 B 갭 분석 체크리스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff; --panel:#ffffff; --panel-2:#f6f8fa; --line:#d0d7de;
+    --text:#1f2328; --muted:#59636e; --dim:#8c959f;
+    --accent:#0969da; --accent-soft:rgba(9,105,218,.07);
+    --gold:#9a6700; --green:#1a7f37; --red:#cf222e; --red-soft:rgba(207,34,46,.07);
+    --c-ok:#1a7f37; --c-part:#bf8700; --c-gap:#cf222e; --c-na:#8c959f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:Inter,"Noto Sans KR","Malgun Gothic",system-ui,sans-serif;font-size:14.5px;line-height:1.65}
+  a{color:var(--accent)}
+  header{padding:26px 28px 18px;border-bottom:1px solid var(--line)}
+  .badge{font:600 10px/1 "IBM Plex Mono",monospace;letter-spacing:.12em;color:var(--accent);
+    border:1px solid var(--accent);border-radius:4px;padding:4px 6px;display:inline-block}
+  h1{margin:12px 0 6px;font:700 24px/1.35 "Noto Serif KR",serif}
+  .meta{color:var(--muted);font-size:13px}
+  .meta b{color:var(--text);font-weight:600}
+  nav.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;flex-wrap:wrap;padding:10px 28px;
+    background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+  nav.tabs a{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:4px 12px;border-radius:20px}
+  nav.tabs a:hover{color:var(--text);border-color:var(--accent)}
+  main{max-width:1080px;margin:0 auto;padding:24px 28px 60px}
+  section{border:1px solid var(--line);border-radius:10px;padding:22px 26px;margin-bottom:20px;overflow-x:auto;scroll-margin-top:60px}
+  h2{margin:0 0 14px;font:700 19px "Noto Serif KR",serif;display:flex;align-items:center;gap:10px}
+  h2 .k{font:600 11px "IBM Plex Mono",monospace;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:3px 6px;letter-spacing:.08em}
+  h3{font-size:14.5px;margin:20px 0 8px;color:var(--gold)}
+  ul,ol{margin:6px 0;padding-left:20px} li{margin:4px 0}
+  .note{font-size:12.5px;color:var(--muted)}
+  .key{background:var(--accent-soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:6px;margin:14px 0}
+  .warn{background:var(--red-soft);border-left:3px solid var(--red);padding:12px 16px;border-radius:6px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr))}
+  .grid>*{min-width:0}
+  .card{border:1px solid var(--line);border-radius:8px;padding:13px 15px;background:var(--panel-2)}
+  .card .t{font-weight:600;margin-bottom:4px}
+  .card .s{color:var(--muted);font-size:13px}
+  .stat{text-align:center}
+  .stat .v{font:700 26px "IBM Plex Mono",monospace;line-height:1.25}
+  .stat .l{font-size:12.5px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+  th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  thead th{color:var(--accent);font-weight:600;border-bottom:1px solid var(--accent);background:var(--panel-2)}
+  td.n{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+  .mono{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+  .pill{display:inline-block;font:600 11px "IBM Plex Mono",monospace;padding:2px 8px;border-radius:10px;color:#fff}
+  .pill.ok{background:var(--c-ok)}.pill.part{background:var(--c-part)}.pill.gap{background:var(--c-gap)}.pill.na{background:var(--c-na)}
+  .tag{display:inline-block;font:600 10.5px "IBM Plex Mono",monospace;padding:2px 7px;border-radius:4px;background:var(--red);color:#fff;vertical-align:middle}
+
+  .toolbar{position:sticky;top:49px;z-index:4;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:4px 0 14px;
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+  .prog{flex:1 1 260px;min-width:0}
+  .prog .bar{height:8px;border-radius:4px;background:var(--panel-2);overflow:hidden;display:flex;border:1px solid var(--line)}
+  .prog .bar i{display:block;height:100%}
+  .prog .txt{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .btns{display:flex;gap:6px;flex-wrap:wrap}
+  .btn{font:inherit;font-size:12.5px;color:var(--text);background:#fff;border:1px solid var(--line);border-radius:6px;padding:5px 11px;cursor:pointer}
+  .btn:hover{border-color:var(--accent)}
+  .btn.danger{color:var(--red)}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+  .filters button{font:inherit;font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--line);
+    border-radius:20px;padding:4px 12px;cursor:pointer}
+  .filters button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  details.cr{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);margin:8px 0}
+  details.cr summary{list-style:none;cursor:pointer;padding:11px 14px;display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center}
+  details.cr summary::-webkit-details-marker{display:none}
+  details.cr .no{font:700 15px "IBM Plex Mono",monospace;color:var(--accent)}
+  details.cr .nm b{display:inline}
+  details.cr .nm span.en{display:block;font-size:12.5px;color:var(--muted)}
+  details.cr .sc{font:600 11.5px "IBM Plex Mono",monospace;color:var(--muted);white-space:nowrap;text-align:right}
+  details.cr .sc .mini{display:flex;height:5px;width:90px;border-radius:3px;overflow:hidden;background:#e6e9ed;margin-top:4px;margin-left:auto}
+  details.cr .sc .mini i{display:block;height:100%}
+  details.cr[open] summary{border-bottom:1px solid var(--line)}
+  details.cr .body{padding:6px 14px 12px;background:#fff;border-radius:0 0 8px 8px}
+  .q{display:grid;grid-template-columns:44px 1fr;gap:4px 10px;padding:11px 0;border-bottom:1px dashed var(--line)}
+  .q:last-of-type{border-bottom:0}
+  .q .qn{font:600 12px "IBM Plex Mono",monospace;color:var(--dim);padding-top:2px}
+  .q .qt{font-weight:500}
+  .q .ev{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .q .ev b{color:var(--gold);font:600 10.5px "IBM Plex Mono",monospace;margin-right:4px}
+  .q .ctl{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .seg button{font:inherit;font-size:12px;background:#fff;color:var(--muted);border:0;border-right:1px solid var(--line);padding:4px 10px;cursor:pointer}
+  .seg button:last-child{border-right:0}
+  .seg button.on[data-v="ok"]{background:var(--c-ok);color:#fff}
+  .seg button.on[data-v="part"]{background:var(--c-part);color:#fff}
+  .seg button.on[data-v="gap"]{background:var(--c-gap);color:#fff}
+  .seg button.on[data-v="na"]{background:var(--c-na);color:#fff}
+  .q input.memo{flex:1 1 220px;min-width:0;font:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+  .q input.memo:focus{outline:none;border-color:var(--accent)}
+  .cf{font-size:12.5px;background:var(--red-soft);border-radius:6px;padding:8px 12px;margin-top:10px}
+  .cf b{color:var(--red)}
+  footer{text-align:center;color:var(--dim);font-size:12px;padding:0 0 40px}
+  @media (max-width:640px){main{padding:16px 12px 40px}section{padding:16px 14px}header{padding:20px 16px 14px}nav.tabs{padding:8px 12px}
+    details.cr summary{grid-template-columns:40px 1fr}details.cr .sc{grid-column:2;text-align:left}details.cr .sc .mini{margin-left:0}
+    .q{grid-template-columns:1fr}.q .ctl{grid-column:1}.toolbar{position:static}}
+  @media print{nav.tabs,.toolbar .btns,.filters,#guide,#prep,#report{display:none}
+    section{border:0;padding:0}details.cr{break-inside:avoid-page}.q{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="badge">연구노트 · 컨설팅 도구</span>
+  <h1>10 CFR 50 부록 B<br>갭 분석 체크리스트</h1>
+  <div class="meta">공급사의 QA 프로그램을 부록 B 18개 기준과 Part 21에 맞춰 점검하는 실무 도구 · 마지막 업데이트 <b>2026-11-10</b></div>
+</header>
+<nav class="tabs">
+  <a href="#guide">사용법</a><a href="#prep">사전 요청 자료</a><a href="#check">체크리스트</a>
+  <a href="#result">결과 요약</a><a href="#report">보고서 작성</a>
+</nav>
+
+<main>
+
+<section id="guide">
+  <h2><span class="k">01</span>사용법</h2>
+  <div class="key">
+    이 체크리스트는 <b>NUPIC 공동감사나 NRC 벤더 검사를 받기 전</b>에 공급사가 스스로 약점을 찾거나, 컨설턴트가 공급사를 진단할 때 쓰는 도구입니다.
+    질문마다 <b>무엇을 보면 확인되는지(증거)</b>를 함께 적었습니다. 판정은 이 브라우저에 자동 저장되고, CSV로 내보내 엑셀에서 보고서로 정리할 수 있습니다.
+  </div>
+  <div class="grid g4">
+    <div class="card"><div class="t">1. 자료 받기</div><div class="s">아래 사전 요청 자료로 문서 검토부터 합니다. 절차서가 요건을 다루는지 확인하는 단계입니다.</div></div>
+    <div class="card"><div class="t">2. 현장 확인</div><div class="s">절차대로 실제로 하는지 기록 샘플과 현장 관찰, 인터뷰로 확인합니다. 지적은 대부분 여기서 나옵니다.</div></div>
+    <div class="card"><div class="t">3. 판정·메모</div><div class="s">질문마다 판정을 누르고, 근거가 된 문서번호나 샘플을 메모에 적습니다.</div></div>
+    <div class="card"><div class="t">4. 보고·시정</div><div class="s">결과 요약에서 미흡 항목을 뽑아 우선순위를 정하고, 공급사의 시정조치 계획(CAP)으로 연결합니다.</div></div>
+  </div>
+  <h3>판정 기준</h3>
+  <table>
+    <thead><tr><th style="width:110px">판정</th><th>의미</th><th style="width:90px">점수</th></tr></thead>
+    <tbody>
+      <tr><td><span class="pill ok">적합</span></td><td>절차가 요건을 다루고, 샘플 기록에서 이행 증거가 확인됨</td><td class="n">1</td></tr>
+      <tr><td><span class="pill part">부분</span></td><td>절차는 있지만 이행이 일부 누락되었거나, 이행은 하지만 절차에 근거가 없음</td><td class="n">0.5</td></tr>
+      <tr><td><span class="pill gap">미흡</span></td><td>절차나 이행 증거가 없음. 감사에서 Finding이나 NON이 될 수 있는 수준</td><td class="n">0</td></tr>
+      <tr><td><span class="pill na">해당없음</span></td><td>공급 범위상 해당 업무가 없음(예: 설계를 하지 않는 제작사의 기준 III). 사유를 메모에 남김</td><td class="n">제외</td></tr>
+    </tbody>
+  </table>
+  <div class="warn"><b>먼저 볼 곳</b>: NUPIC 지적의 약 40%가 상용품 품질검증(CGD), 약 16%가 시정조치 관련이었습니다(2026 NUPIC 벤더 컨퍼런스). 시간이 부족하면 <b>VII → XVI → XV → XII → Part 21</b> 순서로 점검하세요. 체크리스트에서 <span class="tag">고위험</span> 표시가 붙은 기준입니다.</div>
+</section>
+
+<section id="prep">
+  <h2><span class="k">02</span>사전 요청 자료 목록</h2>
+  <p class="note">진단 2~3주 전에 공급사에 요청합니다. 자료가 없다는 사실 자체가 첫 번째 갭입니다.</p>
+  <div class="grid g2">
+    <div class="card"><div class="t">프로그램 문서</div><div class="s"><ul>
+      <li>QA 매뉴얼(현행본)과 개정 이력</li>
+      <li>절차서 목록, 부록 B·NQA-1 요건 대응표</li>
+      <li>조직도, QA 책임자 직무기술서</li>
+      <li>Part 21 절차서와 사업장 게시물</li></ul></div></div>
+    <div class="card"><div class="t">고객·구매</div><div class="s"><ul>
+      <li>최근 고객 PO 2~3건(기술·품질 조항 포함)</li>
+      <li>같은 프로젝트의 하위 공급사 PO</li>
+      <li>승인 공급사 목록(ASL)과 공급사 평가 기록</li>
+      <li>CGD 패키지 2~3건(기술평가, CGS·시험 보고서)</li></ul></div></div>
+    <div class="card"><div class="t">이행 기록</div><div class="s"><ul>
+      <li>최근 1년 NCR 대장, 시정조치(CAR) 대장</li>
+      <li>M&amp;TE 대장, 교정 불합격 이력</li>
+      <li>특수공정 절차·자격 기록(WPS/PQR, WPQ, NDE)</li>
+      <li>최근 납품 품목 1건의 최종 기록 패키지</li></ul></div></div>
+    <div class="card"><div class="t">감사·경영</div><div class="s"><ul>
+      <li>최근 내부감사 계획·보고서, 감사원 자격</li>
+      <li>최근 외부감사(NUPIC·고객·NRC) 결과와 후속 조치</li>
+      <li>경영 검토 기록</li>
+      <li>교육 매트릭스와 자격 기록</li></ul></div></div>
+  </div>
+</section>
+
+<section id="check">
+  <h2><span class="k">03</span>체크리스트</h2>
+  <div class="toolbar">
+    <div class="prog"><div class="bar" id="pbar"></div><div class="txt" id="ptxt"></div></div>
+    <div class="btns">
+      <button class="btn" id="bOpen">모두 펼치기</button>
+      <button class="btn" id="bCsv">CSV 내보내기</button>
+      <button class="btn" id="bPrint">인쇄</button>
+      <button class="btn danger" id="bReset">초기화</button>
+    </div>
+  </div>
+  <div class="filters" id="filters">
+    <button class="on" data-f="all">전체</button>
+    <button data-f="hi">고위험 기준만</button>
+    <button data-f="todo">미판정 항목</button>
+    <button data-f="bad">미흡·부분 항목</button>
+  </div>
+  <div id="crit"></div>
+  <noscript><p class="note">자바스크립트를 켜면 체크리스트가 표시됩니다.</p></noscript>
+  <p class="note">판정과 메모는 이 브라우저에만 저장됩니다(다른 기기나 다른 사람에게는 보이지 않음). 공유하려면 CSV로 내보내세요.</p>
+</section>
+
+<section id="result">
+  <h2><span class="k">04</span>결과 요약</h2>
+  <div class="grid g4" id="stats"></div>
+  <table id="sumtbl">
+    <thead><tr><th>기준</th><th>이름</th><th class="n">적합</th><th class="n">부분</th><th class="n">미흡</th><th class="n">해당없음</th><th class="n">미판정</th><th class="n">점수</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="note">점수 = (적합 + 부분 × 0.5) ÷ 판정한 항목 수(해당없음 제외). 점수는 우선순위를 정하는 참고값이며 감사 합격 여부를 뜻하지 않습니다. 고위험 기준에 미흡이 하나라도 있으면 점수와 관계없이 먼저 시정하세요.</p>
+</section>
+
+<section id="report">
+  <h2><span class="k">05</span>갭 보고서 작성 요령</h2>
+  <h3>지적 한 건은 세 부분으로 씁니다</h3>
+  <table>
+    <thead><tr><th style="width:120px">구성</th><th>내용</th><th>예시</th></tr></thead>
+    <tbody>
+      <tr><td>요건</td><td>어느 기준의 어떤 요구사항인지</td><td>부록 B 기준 XII: 교정 불합격 시 그 장비로 측정한 결과의 유효성을 평가해야 함</td></tr>
+      <tr><td>사실</td><td>무엇이 요건과 다른지, 한 문장으로</td><td>2026년 교정 불합격 장비 3대에 대해 과거 측정 영향 평가가 수행되지 않음</td></tr>
+      <tr><td>증거</td><td>확인한 문서번호·샘플·날짜</td><td>M&amp;TE 대장 MT-0412, MT-0577, MT-0590, 교정성적서 2026-03-14</td></tr>
+    </tbody>
+  </table>
+  <h3>우선순위 정하기</h3>
+  <ol>
+    <li><b>제품 영향 가능성이 있는 미흡</b>: NUPIC의 Finding에 해당하는 수준입니다. 납품 품목의 영향 평가와 Part 21 평가를 먼저 검토합니다.</li>
+    <li><b>고위험 기준(VII·XVI·XV·XII)의 미흡</b>: 감사에서 거의 확실히 지적되는 영역입니다.</li>
+    <li><b>절차는 있으나 이행이 부분적인 항목</b>: 교육과 기록 양식 보완으로 빠르게 개선됩니다.</li>
+    <li><b>문서상 공백</b>: 절차서 개정으로 해결하되, 개정 후 이행 기록이 쌓이기까지 시간이 걸린다는 점을 일정에 반영합니다.</li>
+  </ol>
+  <div class="key"><b>컨설턴트가 주의할 점</b>: 갭 분석 결과는 공급사 자신의 시정조치 프로그램(기준 XVI)에 등록되어야 효과가 있습니다. 컨설턴트가 대신 고쳐 주는 것이 아니라, 공급사가 원인을 분석하고 재발 방지 조치를 하도록 돕는 것이 목적입니다. 체크리스트는 공식 NUPIC 체크리스트(NUPIC Document 7)를 대체하지 않으며, 고객 PO가 요구하는 NQA-1 판과 추가 요건을 반드시 함께 확인해야 합니다.</div>
+  <p class="note">관련 노트: <a href="appendix_b.html">10 CFR 50 부록 B</a> · <a href="nupic.html">NUPIC 개념 설명</a></p>
+</section>
+
+</main>
+<footer>Study Notes · 부록 B 갭 분석 체크리스트 · 실무 참고용이며 공식 감사 체크리스트가 아닙니다</footer>
+
+<script>
+const D = [
+ ["I","조직","Organization",0,[
+  ["QA 조직과 책임자의 권한·책임이 QA 매뉴얼과 조직도에 문서화되어 있는가?","QA 매뉴얼 조직 조항, 조직도, 직무기술서"],
+  ["QA 조직이 원가·일정 책임에서 독립되어 있고, 작업중지(stop work) 권한이 있는가?","QA 책임자의 보고 라인, 작업중지 절차와 실제 사용 이력"],
+  ["조직 변경이 있을 때 매뉴얼과 절차서가 제때 개정되는가?","최근 조직 변경 일자와 매뉴얼 개정 일자 비교"],
+  ["외부에 맡긴 업무(외주 검사·교정 등)의 책임 범위가 문서로 정해져 있는가?","외주 계약서·PO의 업무 범위, 매뉴얼의 위임 조항"]
+ ],"QA 책임자가 생산·영업 책임자에게 보고, 조직 변경 후 매뉴얼 미개정"],
+ ["II","품질보증 프로그램","Quality Assurance Program",0,[
+  ["QA 프로그램이 부록 B 18개 기준과 고객이 요구하는 NQA-1 판을 모두 다루는가?","기준별 절차 대응표(cross-reference matrix), 고객 PO의 요구 판"],
+  ["QA 프로그램이 적용되는 품목·활동(안전 관련 범위)이 명확히 정의되어 있는가?","QA 매뉴얼의 적용 범위 조항, 제품별 등급 구분 기록"],
+  ["품질에 영향을 주는 업무를 하는 인원의 교육·자격 요건이 정해져 있고 기록이 유지되는가?","교육 매트릭스, 이수 기록, 자격 만료일 관리표"],
+  ["경영진이 QA 프로그램의 적정성과 효과를 정기적으로 검토하고 조치를 추적하는가?","경영 검토 회의록, 후속 조치 추적 기록"]
+ ],"교육 기록 누락·자격 만료, 경영 검토가 형식적"],
+ ["III","설계 관리","Design Control",0,[
+  ["설계 입력(설계 기준, 고객 사양, 적용 코드)이 식별되고 문서화되어 있는가?","설계 입력 목록, 고객 사양서와의 대조"],
+  ["설계 검증을 원설계자가 아닌 자격 있는 사람이 수행하는가?","설계 검증 기록의 서명자, 검증 방법(검토·대체계산·시험)"],
+  ["설계 변경이 원설계와 같은 수준으로 검토·승인되는가?","설계 변경 이력, 변경 검토 기록"],
+  ["설계·해석용 소프트웨어가 검증되고 형상 관리되는가(NQA-1 Part II Subpart 2.7)?","소프트웨어 목록, 검증·확인(V&amp;V) 기록, 버전 관리"]
+ ],"설계 입력 미반영, 독립 검증 누락, 비안전 분류 근거 없음"],
+ ["IV","구매문서 관리","Procurement Document Control",0,[
+  ["PO에 기술 요건, 품질 요건(부록 B·NQA-1 판), Part 21 적용 문구가 들어 있는가?","최근 PO 샘플의 품질 조항"],
+  ["고객 PO의 요건이 하위 공급사 PO로 빠짐없이 전달(flow-down)되는가?","같은 프로젝트의 고객 PO와 하위 공급사 PO 대조"],
+  ["구매문서와 그 변경이 발행 전에 검토·승인되는가?","PO 검토 서명, PO 변경 이력"],
+  ["공급사에 요구하는 제출 문서(CoC, CMTR, 교정성적서)와 출입·감사 권리를 명시하는가?","PO의 문서 제출 조항, right of access 조항"]
+ ],"PO에 Part 21 문구 누락, 고객 요건을 하위 공급사로 넘기지 않음"],
+ ["V","지침·절차·도면","Instructions, Procedures, and Drawings",0,[
+  ["품질에 영향을 주는 업무가 모두 문서화된 절차서나 작업지시서로 수행되는가?","절차서 목록과 실제 업무 흐름 비교"],
+  ["절차서와 작업지시서에 정량적이거나 정성적인 합격 기준이 있는가?","절차서 샘플의 합격 기준 조항"],
+  ["현장 작업이 실제로 절차서대로 수행되는가?","현장 관찰, 작업자 인터뷰, 트래블러 기록"]
+ ],"절차와 다른 작업, 합격 기준 없는 절차서"],
+ ["VI","문서 관리","Document Control",0,[
+  ["문서의 발행과 개정이 권한 있는 사람의 검토·승인을 거치는가?","문서 대장, 개정 승인 기록"],
+  ["작업 장소에 최신본만 있고, 구버전은 회수되거나 표시되는가?","현장 문서 무작위 샘플의 개정번호 대조"],
+  ["문서 변경을 원래 검토한 조직이 다시 검토하는가?","변경 검토 서명자 비교"],
+  ["전자문서 시스템의 접근 권한과 개정 관리가 통제되는가?","시스템 권한 목록, 개정 이력 로그"]
+ ],"현장의 구버전 도면, 승인 없는 수기 수정"],
+ ["VII","구매품·서비스 관리","Control of Purchased Material, Equipment, and Services",1,[
+  ["승인 공급사 목록(ASL)이 있고, 공급사별 승인 범위·근거·만료일이 관리되는가?","ASL, 공급사별 승인 근거(감사·조사·NUPIC 공유감사)"],
+  ["공급사 평가(감사·조사)가 주기 안에, 자격 있는 감사원에 의해 수행되는가? NUPIC 감사를 활용한다면 범위가 구매 품목과 맞는가?","공급사 감사 보고서, 감사원 자격, NUPIC 감사 범위와 PO 품목 비교"],
+  ["인수검사가 PO 요건과 CoC·CMTR을 대조해 수행되는가?","인수검사 기록 샘플, CMTR의 규격 값 확인 흔적"],
+  ["상용품 품질검증(CGD) 기술평가에서 안전기능, 고장모드, 핵심 특성(CC)이 식별되는가?","CGD 기술평가서 샘플"],
+  ["CGD 승인 방법(1~4) 선정 근거와 샘플링 계획이 적절하고, 시험·실사(CGS) 결과가 모든 핵심 특성을 다루는가?","CGD 패키지의 방법 선정 근거, 시험 보고서, CGS 보고서"],
+  ["교정·시험 서비스를 ILAC 인정으로 승인할 때 범위·불확도 등 조건을 PO에 명시하는가(NEI 14-05A)?","교정 서비스 PO, 인정 범위 확인 기록"],
+  ["위조·사기·의심품(CFSI) 방지 절차와 관련 교육이 있는가?","CFSI 절차서, 교육 기록, 의심품 처리 이력"]
+ ],"공급사 감사 범위 부적절, CGD 핵심 특성 누락, CGS 보고서 미보존 — NUPIC 지적 최다 영역"],
+ ["VIII","재료·부품 식별 관리","Identification and Control of Materials, Parts, and Components",0,[
+  ["재료와 부품이 히트번호·일련번호 등으로 식별되고 기록과 추적 가능한가?","품목 실물과 CMTR 히트번호 대조"],
+  ["절단·가공 시 식별 표시가 이관되고 확인 기록이 남는가?","표시 이관(marking transfer) 기록"],
+  ["식별 방법(각인 위치·방식)이 품목 기능에 영향을 주지 않는가?","표시 방법 절차, 도면의 표시 위치 지정"]
+ ],"표시 판독 불가, 절단 후 이관 누락"],
+ ["IX","특수공정 관리","Control of Special Processes",0,[
+  ["특수공정(용접, 열처리, NDE, 도금 등)이 식별되어 있고 검증된 절차로 수행되는가?","특수공정 목록, WPS/PQR, NDE 절차서"],
+  ["수행자의 자격(WPQ, SNT-TC-1A·CP-189 레벨)이 유효하고 연속성이 유지되는가?","자격 기록, 용접사 연속성 기록"],
+  ["공정 변수가 기록되고 절차 범위 안에 있는가?","용접 기록, 열처리 차트"],
+  ["외주 특수공정 공급사가 승인 공급사 목록에 있는가?","외주 공급사의 ASL 등재 여부"]
+ ],"절차 변수 범위 이탈, 자격 만료 요원의 수행"],
+ ["X","검사","Inspection",0,[
+  ["검사 계획(ITP)에 검사 항목, 합격 기준, 입회점(hold·witness)이 정의되어 있는가?","ITP, 고객 입회점 요구"],
+  ["검사자가 작업자와 독립적이고 자격이 있는가?","검사 기록의 서명자, 검사원 자격"],
+  ["입회점이 실제로 지켜졌는가?","트래블러 서명 날짜·시간 순서"]
+ ],"자기 작업을 자기가 검사, 입회점 건너뜀"],
+ ["XI","시험 관리","Test Control",0,[
+  ["시험 절차서에 요건, 합격 한계, 선행 조건, 계측 장비, 환경 조건이 들어 있는가?","시험 절차서 샘플"],
+  ["시험 결과가 합격 기준과 비교·평가되고 평가자가 서명하는가?","시험 보고서의 평가란"],
+  ["시험 후 확인 항목(누설 검사, 세척수 수질 등)이 빠지지 않는가?","시험 후 점검 기록"]
+ ],"시험 후 확인 누락, 결과 평가 없이 서명"],
+ ["XII","측정·시험장비 관리","Control of Measuring and Test Equipment",1,[
+  ["M&amp;TE 대장이 있고, 교정 주기와 상태가 관리되며 사용 중인 장비가 모두 유효한가?","M&amp;TE 대장, 현장 장비의 교정 라벨"],
+  ["교정이 국가표준에 추적 가능하고, 교정 기관이 승인 공급사인가?","교정 성적서, 인정기관 표시, ASL"],
+  ["교정 불합격(out-of-tolerance) 시 그 장비로 측정한 과거 결과의 영향을 평가하는가?","교정 불합격 이력과 영향 평가 기록"],
+  ["측정·검사 기록에 사용한 장비 번호가 남아 역추적이 가능한가?","검사 기록 샘플의 장비 번호란"]
+ ],"교정 불합격 영향 평가 누락, 성적서에 PO 요건 충족 인증 없음"],
+ ["XIII","취급·보관·운송","Handling, Storage, and Shipping",0,[
+  ["취급·보관·포장·운송 요건이 절차화되어 있는가(보관 등급 구분 포함)?","보관 절차서, 포장 사양"],
+  ["보관 구역의 환경(온습도, 청결, 출입 통제)이 유지되고 기록되는가?","보관 구역 점검 기록"],
+  ["장기 보관품의 주기 점검과 보존 처리를 하는가?","보존 처리 기록"]
+ ],"보관 등급 미준수, 개방 노즐 보호 누락"],
+ ["XIV","검사·시험·운전 상태 표시","Inspection, Test, and Operating Status",0,[
+  ["품목의 검사·시험 상태가 태그·라벨·트래블러로 표시되는가?","현장 품목의 상태 표시"],
+  ["상태 표시를 바꿀 수 있는 권한이 통제되는가?","상태 표시 절차, 권한자 목록"],
+  ["검사가 끝나지 않은 품목이 다음 공정으로 넘어가지 않는가?","트래블러 서명 순서"]
+ ],"검사 전 품목이 다음 공정으로 이동"],
+ ["XV","부적합품 관리","Nonconforming Materials, Parts, or Components",1,[
+  ["부적합품이 식별, 격리, 문서화(NCR)되는가?","NCR 대장, 격리 구역 현장 확인"],
+  ["처리 판정(그대로 사용, 수리)이 권한자의 검토·승인을 거치고, 필요하면 고객 승인을 받는가?","NCR 처리 판정 기록, 고객 승인 기록"],
+  ["오래 방치된 미처리 NCR이 없는가?","NCR 대장의 경과 일수"],
+  ["NCR이 Part 21 평가 절차로 연결되는가?","NCR 양식의 Part 21 검토란, 평가 기록"]
+ ],"장기 미처리 NCR, 격리 안 된 부적합품, Part 21 평가 누락"],
+ ["XVI","시정조치","Corrective Action",1,[
+  ["품질 저해 조건(CAQ)이 여러 경로(NCR, 감사, 고객 불만, 직원 제기)에서 하나의 시정조치 프로그램으로 모이는가?","CAP 절차서, CAR 대장의 출처 구분"],
+  ["중대한 CAQ(SCAQ)를 구분하는 기준이 있고, 근본원인분석과 재발 방지 조치를 하는가?","중대성 분류 기준, 근본원인분석 보고서"],
+  ["시정조치 기한과 적시성 지표가 있고 장기 미결이 관리되는가?","CAR 대장의 기한·경과 일수, 적시성 지표"],
+  ["종결 후 효과성 검증을 하는가?","효과성 검증 기록(종결 후 일정 기간 경과 시점)"],
+  ["시정조치 현황과 추세가 경영진에 보고되는가?","경영 보고 자료, 추세 분석"]
+ ],"효과성 미검증, 장기 미결, 중대성 분류 기준 부재 — NRC 지적 최다 기준"],
+ ["XVII","품질보증 기록","Quality Assurance Records",0,[
+  ["QA 기록의 종류와 보존 기간(영구·비영구)이 정의되어 있는가?","기록 보존 목록"],
+  ["기록 보관 환경(내화 보관 또는 이중 보관)과 전자기록 백업이 있는가?","보관 시설 확인, 백업 기록"],
+  ["기록이 식별·검색 가능하고, 최종 기록 패키지가 실제 납품 품목과 일치하는가?","최근 납품 품목 1건의 기록 패키지 추적"],
+  ["CGD 기록(기술평가, CGS 보고서)이 QA 기록으로 보존되는가?","CGD 기록의 보존 분류"]
+ ],"CGS 보고서 미보존, 기록 패키지와 실물 불일치"],
+ ["XVIII","감사","Audits",0,[
+  ["내부감사 계획이 적용되는 모든 기준을 정해진 주기 안에 다루는가?","내부감사 계획과 실적, 기준별 커버리지"],
+  ["감사원이 자격(NQA-1 기준 리드 오디터 등)을 갖추고 감사 대상 업무와 독립적인가?","감사원 자격 기록, 감사 배정표"],
+  ["감사 결과가 경영진에 보고되고, 지적의 후속 확인(필요 시 재감사)이 이루어지는가?","감사 보고서 배포, 후속 확인 기록"]
+ ],"감사 범위의 기준 누락, 감사원 독립성 결여, 후속 확인 없음"],
+ ["P21","Part 21 결함 보고","10 CFR Part 21",1,[
+  ["Part 21 절차서가 있고, 결함·불이행 평가를 누가 어떻게 하는지 정해져 있는가?","Part 21 절차서, 책임자 지정"],
+  ["발견 후 60일 안에 평가를 끝내거나 중간 보고하는 체계가 있는가?","평가 기록의 발견일·완료일"],
+  ["스스로 평가할 수 없을 때 구매자에게 5영업일 안에 알리는 체계가 있는가?","고객 통보 기록"],
+  ["Part 21 규정과 절차를 사업장에 게시했는가(10 CFR 21.6)?","게시물 현장 확인"]
+ ],"NCR에서 Part 21 평가로 연결되지 않음, 평가 기한 초과"],
+ ["SC","안전문화·문제 제기","Safety Culture / SCWE",0,[
+  ["직원이 보복 우려 없이 품질 문제를 제기할 수 있는 경로가 있고, 그 사실을 알고 있는가?","제기 경로 안내, 직원 인터뷰"],
+  ["제기된 우려가 시정조치 프로그램에 등록되고 결과가 피드백되는가?","CAR 대장의 직원 제기 건"]
+ ],"현장 직원이 문제 제기 경로를 모름"]
+];
+const KEY = "gapchk-v1";
+const LBL = {ok:"적합",part:"부분",gap:"미흡",na:"해당없음"};
+const COL = {ok:"var(--c-ok)",part:"var(--c-part)",gap:"var(--c-gap)",na:"var(--c-na)"};
+let S = {};
+try { S = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { S = {}; }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const box = document.getElementById("crit");
+for (const [no,ko,en,hi,qs,cf] of D) {
+  const d = document.createElement("details");
+  d.className = "cr"; d.dataset.no = no; d.dataset.hi = hi; d.id = "c" + no;
+  let h = `<summary><span class="no">${no}</span><span class="nm"><b>${ko}</b>${hi ? ' <span class="tag">고위험</span>' : ''}<span class="en">${en}</span></span><span class="sc" id="sc-${no}"></span></summary><div class="body">`;
+  qs.forEach(([q,ev],i) => {
+    const id = no + "-" + (i+1);
+    h += `<div class="q" data-id="${id}"><span class="qn">${id}</span><div><div class="qt">${q}</div><div class="ev"><b>EVIDENCE</b>${ev}</div></div>
+      <div class="ctl"><span class="seg">${Object.keys(LBL).map(v => `<button type="button" data-v="${v}">${LBL[v]}</button>`).join("")}</span>
+      <input class="memo" type="text" placeholder="메모: 확인한 문서번호, 샘플, 사유"></div></div>`;
+  });
+  h += `<div class="cf"><b>흔한 지적</b> · ${cf}</div></div>`;
+  d.innerHTML = h;
+  box.append(d);
+}
+document.querySelectorAll(".q").forEach(q => {
+  const st = S[q.dataset.id] || {};
+  if (st.v) q.querySelector(`.seg button[data-v="${st.v}"]`).classList.add("on");
+  q.querySelector(".memo").value = st.m || "";
+});
+
+box.addEventListener("click", e => {
+  const b = e.target.closest(".seg button"); if (!b) return;
+  const q = b.closest(".q"), id = q.dataset.id, v = b.dataset.v;
+  const cur = (S[id] && S[id].v) === v ? "" : v;
+  S[id] = Object.assign({}, S[id], {v: cur});
+  q.querySelectorAll(".seg button").forEach(x => x.classList.toggle("on", x.dataset.v === cur));
+  save(); render();
+});
+box.addEventListener("input", e => {
+  if (!e.target.classList.contains("memo")) return;
+  const id = e.target.closest(".q").dataset.id;
+  S[id] = Object.assign({}, S[id], {m: e.target.value});
+  save();
+});
+
+function count(no){
+  const c = {ok:0,part:0,gap:0,na:0,todo:0,total:0};
+  const row = D.find(r => r[0] === no);
+  row[4].forEach((_,i) => { const v = (S[no+"-"+(i+1)]||{}).v; c.total++; if (v) c[v]++; else c.todo++; });
+  const den = c.ok + c.part + c.gap;
+  c.score = den ? (c.ok + c.part*0.5) / den : null;
+  return c;
+}
+function bar(c, el){
+  el.innerHTML = ["ok","part","gap","na"].map(v => c[v] ? `<i style="width:${c[v]/c.total*100}%;background:${COL[v]}"></i>` : "").join("");
+}
+function render(){
+  const T = {ok:0,part:0,gap:0,na:0,todo:0,total:0}; const rows = [];
+  for (const r of D) {
+    const c = count(r[0]);
+    for (const k in T) T[k] += c[k];
+    const sc = document.getElementById("sc-" + r[0]);
+    sc.innerHTML = `${c.total - c.todo}/${c.total}${c.score === null ? "" : " · " + Math.round(c.score*100) + "%"}<span class="mini"></span>`;
+    bar(c, sc.querySelector(".mini"));
+    rows.push(`<tr><td class="mono">${r[0]}</td><td>${r[1]}${r[3] ? ' <span class="tag">고위험</span>' : ''}</td><td class="n">${c.ok}</td><td class="n">${c.part}</td><td class="n" style="${c.gap ? 'color:var(--red);font-weight:700' : ''}">${c.gap}</td><td class="n">${c.na}</td><td class="n">${c.todo}</td><td class="n">${c.score === null ? "–" : Math.round(c.score*100) + "%"}</td></tr>`);
+  }
+  document.querySelector("#sumtbl tbody").innerHTML = rows.join("");
+  bar(T, document.getElementById("pbar"));
+  const den = T.ok + T.part + T.gap;
+  const score = den ? Math.round((T.ok + T.part*0.5)/den*100) + "%" : "–";
+  document.getElementById("ptxt").textContent = `판정 ${T.total - T.todo} / ${T.total} 항목 · 적합 ${T.ok} · 부분 ${T.part} · 미흡 ${T.gap} · 해당없음 ${T.na} · 전체 점수 ${score}`;
+  document.getElementById("stats").innerHTML =
+    `<div class="card stat"><div class="v" style="color:var(--accent)">${T.total - T.todo}/${T.total}</div><div class="l">판정 완료</div></div>
+     <div class="card stat"><div class="v" style="color:var(--gold)">${score}</div><div class="l">전체 점수</div></div>
+     <div class="card stat"><div class="v" style="color:var(--c-gap)">${T.gap}</div><div class="l">미흡 항목</div></div>
+     <div class="card stat"><div class="v" style="color:var(--c-part)">${T.part}</div><div class="l">부분 항목</div></div>`;
+  applyFilter();
+}
+
+let F = "all";
+function applyFilter(){
+  document.querySelectorAll("details.cr").forEach(d => {
+    let showC = F !== "hi" || d.dataset.hi === "1", any = false;
+    d.querySelectorAll(".q").forEach(q => {
+      const v = (S[q.dataset.id]||{}).v;
+      const ok = F === "todo" ? !v : F === "bad" ? (v === "gap" || v === "part") : true;
+      q.style.display = ok ? "" : "none"; if (ok) any = true;
+    });
+    d.style.display = showC && any ? "" : "none";
+  });
+}
+document.getElementById("filters").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  F = b.dataset.f;
+  document.querySelectorAll("#filters button").forEach(x => x.classList.toggle("on", x === b));
+  if (F === "todo" || F === "bad") document.querySelectorAll("details.cr").forEach(d => d.open = true);
+  applyFilter();
+});
+document.getElementById("bOpen").addEventListener("click", e => {
+  const all = [...document.querySelectorAll("details.cr")];
+  const open = !all.every(d => d.open);
+  all.forEach(d => d.open = open);
+  e.target.textContent = open ? "모두 접기" : "모두 펼치기";
+});
+document.getElementById("bPrint").addEventListener("click", () => {
+  document.querySelectorAll("details.cr").forEach(d => d.open = true); window.print();
+});
+document.getElementById("bReset").addEventListener("click", () => {
+  if (!confirm("모든 판정과 메모를 지울까요? 되돌릴 수 없습니다.")) return;
+  S = {}; save();
+  document.querySelectorAll(".seg button.on").forEach(b => b.classList.remove("on"));
+  document.querySelectorAll(".memo").forEach(m => m.value = "");
+  render();
+});
+document.getElementById("bCsv").addEventListener("click", () => {
+  const q = s => '"' + String(s).replace(/&amp;/g,"&").replace(/"/g,'""') + '"';
+  const lines = [["기준","기준명","번호","확인 질문","확인 증거","판정","메모"].map(q).join(",")];
+  for (const [no,ko,,,qs] of D) qs.forEach(([t,ev],i) => {
+    const id = no + "-" + (i+1), st = S[id] || {};
+    lines.push([no,ko,id,t,ev,st.v ? LBL[st.v] : "미판정",st.m || ""].map(q).join(","));
+  });
+  const blob = new Blob(["﻿" + lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "appendixB_gap_" + new Date().toISOString().slice(0,10) + ".csv";
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+render();
+</script>
+</body>
+</html>
