@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[연구노트] 10 CFR 50 부록 B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff; --panel:#ffffff; --panel-2:#f6f8fa; --line:#d0d7de;
+    --text:#1f2328; --muted:#59636e; --dim:#8c959f;
+    --accent:#0969da; --accent-soft:rgba(9,105,218,.07);
+    --gold:#9a6700; --green:#1a7f37; --red:#cf222e; --red-soft:rgba(207,34,46,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:Inter,"Noto Sans KR","Malgun Gothic",system-ui,sans-serif;font-size:14.5px;line-height:1.65}
+  a{color:var(--accent)}
+  header{padding:26px 28px 18px;border-bottom:1px solid var(--line)}
+  .badge{font:600 10px/1 "IBM Plex Mono",monospace;letter-spacing:.12em;color:var(--accent);
+    border:1px solid var(--accent);border-radius:4px;padding:4px 6px;display:inline-block}
+  h1{margin:12px 0 6px;font:700 24px/1.35 "Noto Serif KR",serif}
+  .meta{color:var(--muted);font-size:13px}
+  .meta b{color:var(--text);font-weight:600}
+  nav.tabs{position:sticky;top:0;z-index:5;display:flex;gap:6px;flex-wrap:wrap;padding:10px 28px;
+    background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+  nav.tabs a{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:4px 12px;border-radius:20px}
+  nav.tabs a:hover{color:var(--text);border-color:var(--accent)}
+  main{max-width:1080px;margin:0 auto;padding:24px 28px 60px}
+  section{border:1px solid var(--line);border-radius:10px;padding:22px 26px;margin-bottom:20px;overflow-x:auto;scroll-margin-top:60px}
+  h2{margin:0 0 14px;font:700 19px "Noto Serif KR",serif;display:flex;align-items:center;gap:10px}
+  h2 .k{font:600 11px "IBM Plex Mono",monospace;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:3px 6px;letter-spacing:.08em}
+  h3{font-size:14.5px;margin:20px 0 8px;color:var(--gold)}
+  ul{margin:6px 0;padding-left:20px} li{margin:4px 0}
+  .note{font-size:12.5px;color:var(--muted)}
+  .key{background:var(--accent-soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:6px;margin:14px 0}
+  .warn{background:var(--red-soft);border-left:3px solid var(--red);padding:12px 16px;border-radius:6px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr))}
+  .grid>*{min-width:0}
+  .card{border:1px solid var(--line);border-radius:8px;padding:13px 15px;background:var(--panel-2)}
+  .card .t{font-weight:600;margin-bottom:4px}
+  .card .s{color:var(--muted);font-size:13px}
+  .stat{text-align:center}
+  .stat .v{font:700 26px "IBM Plex Mono",monospace;color:var(--gold);line-height:1.25}
+  .stat .l{font-size:12.5px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+  th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  thead th{color:var(--accent);font-weight:600;border-bottom:1px solid var(--accent);background:var(--panel-2)}
+  .mono{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 14px}
+  .filters button{font:inherit;font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--line);
+    border-radius:20px;padding:4px 12px;cursor:pointer}
+  .filters button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  details.cr{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);margin:8px 0}
+  details.cr summary{list-style:none;cursor:pointer;padding:11px 14px;display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center}
+  details.cr summary::-webkit-details-marker{display:none}
+  details.cr .no{font:700 15px "IBM Plex Mono",monospace;color:var(--accent)}
+  details.cr .nm b{display:block}
+  details.cr .nm span{font-size:12.5px;color:var(--muted)}
+  details.cr .gp{font:600 10.5px "IBM Plex Mono",monospace;padding:2px 8px;border-radius:10px;color:#fff;white-space:nowrap}
+  details.cr[open] summary{border-bottom:1px solid var(--line)}
+  details.cr .body{padding:12px 16px 14px;background:#fff;border-radius:0 0 8px 8px}
+  .row{display:grid;grid-template-columns:96px 1fr;gap:10px;margin:6px 0;font-size:13.5px}
+  .row>span:first-child{color:var(--dim);font:600 11.5px "IBM Plex Mono",monospace;padding-top:2px}
+  .gp.plan{background:#0969da}.gp.do{background:#1a7f37}.gp.check{background:#9a6700}.gp.act{background:#cf222e}
+  .tag{display:inline-block;font:600 10.5px "IBM Plex Mono",monospace;padding:2px 7px;border-radius:4px;background:var(--red);color:#fff}
+  footer{text-align:center;color:var(--dim);font-size:12px;padding:0 0 40px}
+  @media (max-width:640px){main{padding:16px 12px 40px}section{padding:16px 14px}header{padding:20px 16px 14px}nav.tabs{padding:8px 12px}
+    details.cr summary{grid-template-columns:40px 1fr}details.cr .gp{display:none}.row{grid-template-columns:1fr;gap:2px}}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="badge">연구노트 · 10 CFR 50</span>
+  <h1>10 CFR 50 부록 B<br>원전 품질보증 18개 기준 정리</h1>
+  <div class="meta">원제: <b>Appendix B to Part 50 — Quality Assurance Criteria for Nuclear Power Plants and Fuel Reprocessing Plants</b> · 마지막 업데이트 <b>2026-11-10</b></div>
+</header>
+<nav class="tabs">
+  <a href="#summary">한눈에 보기</a><a href="#scope">적용 범위</a><a href="#criteria">18개 기준</a>
+  <a href="#map">NUPIC 체크리스트 대응</a><a href="#cases">지적 사례</a><a href="#terms">헷갈리는 개념</a><a href="#refs">관련 규정·원문</a>
+</nav>
+
+<main>
+
+<section id="summary">
+  <h2><span class="k">01</span>한눈에 보기</h2>
+  <div class="key">
+    <b>부록 B</b>는 미국 원자력규제위원회(NRC)가 정한 <b>원전 품질보증(QA)의 최상위 요건</b>입니다.
+    안전 관련 구조물·계통·기기(SSC)를 설계하고, 구매하고, 만들고, 설치하고, 시험하고, 운전·정비하는 모든 활동이
+    <b>18개 기준(Criterion I~XVIII)</b>을 따라야 합니다. 직접 적용되는 대상은 인허가 보유자(원전 사업자)입니다.
+    하지만 사업자가 구매문서로 이 요건을 공급사에게 넘기기 때문에, <b>안전등급 기기를 공급하는 회사도 사실상 같은 요건을 지켜야 합니다.</b>
+  </div>
+  <div class="grid g4">
+    <div class="card stat"><div class="v">18</div><div class="l">품질보증 기준 수</div></div>
+    <div class="card stat"><div class="v">1970</div><div class="l">제정 연도</div></div>
+    <div class="card stat"><div class="v">VII</div><div class="l">공급사 평가의 근거 기준 (NUPIC 감사의 출발점)</div></div>
+    <div class="card stat"><div class="v">XVI</div><div class="l">NRC 벤더 검사에서 가장 자주 지적되는 기준 중 하나</div></div>
+  </div>
+  <p class="note">이 노트는 원문을 이해하기 쉽게 요약한 것이며 공식 번역이 아닙니다. 해석이 필요하면 반드시 <a href="#refs">원문</a>을 확인하세요.</p>
+</section>
+
+<section id="scope">
+  <h2><span class="k">02</span>적용 범위와 기본 개념</h2>
+  <div class="grid g2">
+    <div class="card"><div class="t">무엇에 적용되나</div><div class="s">사고를 막거나 사고 결과를 완화해 공중의 건강과 안전에 대한 과도한 위험을 방지하는 SSC, 즉 <b>안전 관련(safety-related)</b> 품목입니다. 요건은 해당 품목의 <b>안전상 중요도에 맞는 정도로</b> 적용합니다.</div></div>
+    <div class="card"><div class="t">어떤 활동에 적용되나</div><div class="s">설계, 구매, 제작, 취급, 운송, 보관, 세척, 설치, 검사, 시험, 운전, 정비, 핵연료 교체, 수리, 개조 등 품질에 영향을 주는 모든 활동.</div></div>
+    <div class="card"><div class="t">품질보증(QA)과 품질관리(QC)</div><div class="s">QA는 품목이 운전 중 제 기능을 한다는 <b>충분한 확신을 주기 위한 계획적이고 체계적인 모든 활동</b>입니다. QC는 그중 재료·부품·시스템의 물리적 특성을 확인하고 관리하는 활동입니다.</div></div>
+    <div class="card"><div class="t">누가 책임지나</div><div class="s">인허가 신청자와 보유자. 업무를 공급사에 위임할 수는 있지만 <b>책임은 위임할 수 없습니다.</b> 그래서 사업자가 공급사를 감사하고(NUPIC), NRC는 공급사도 직접 검사합니다(벤더 검사).</div></div>
+  </div>
+  <h3>인허가 절차와의 연결</h3>
+  <ul>
+    <li><b>10 CFR 50.34</b>: 예비·최종 안전성분석보고서(PSAR·FSAR)에 부록 B를 어떻게 만족할지 QA 프로그램을 기술해야 합니다.</li>
+    <li><b>10 CFR 50.54(a)</b>: 승인된 QA 프로그램 기술서(QAPD)를 바꿀 때, 약속을 줄이는 변경은 NRC의 사전 승인이 필요합니다.</li>
+    <li><b>10 CFR Part 52</b>: 설계인증, 건설·운영 통합허가(COL)에도 부록 B가 적용됩니다.</li>
+    <li>실무 표준: 대부분 <b>ASME NQA-1</b>(NRC는 RG 1.28로 승인)로 부록 B를 구체적으로 구현합니다.</li>
+  </ul>
+</section>
+
+<section id="criteria">
+  <h2><span class="k">03</span>18개 기준</h2>
+  <p class="note">기준 하나를 누르면 핵심 요구사항, 감사에서 확인하는 증거, 흔한 지적이 펼쳐집니다. 색은 이해를 돕기 위한 분류(PDCA)이며 원문에 있는 구분이 아닙니다.</p>
+  <div class="filters" id="filters">
+    <button class="on" data-g="all">전체</button>
+    <button data-g="plan">계획·조직</button>
+    <button data-g="do">실행·관리</button>
+    <button data-g="check">검증·확인</button>
+    <button data-g="act">개선·기록</button>
+  </div>
+  <div id="crit"></div>
+  <noscript><p class="note">자바스크립트를 켜면 18개 기준 목록이 표시됩니다.</p></noscript>
+</section>
+
+<section id="map">
+  <h2><span class="k">04</span>NUPIC 표준 체크리스트와의 대응</h2>
+  <p>NUPIC 공동감사 체크리스트(NUPIC Document 7)의 16개 섹션은 부록 B 기준을 공급사 업무 흐름에 맞게 다시 묶은 것입니다.</p>
+  <table>
+    <thead><tr><th>부록 B 기준</th><th>NUPIC 체크리스트 섹션</th></tr></thead>
+    <tbody>
+      <tr><td>I 조직 · II QA 프로그램</td><td>10 조직/프로그램 · 14 교육/자격</td></tr>
+      <tr><td>III 설계 관리</td><td>2 설계 · 4 소프트웨어 QA</td></tr>
+      <tr><td>IV 구매문서 관리 · VII 구매품 관리</td><td>1 계약 검토 · 5 구매 · 3 상용품 품질검증(CGD)</td></tr>
+      <tr><td>V 지침·절차·도면 · VI 문서 관리</td><td>9 문서 관리/적정성</td></tr>
+      <tr><td>VIII 식별·관리 · XIII 취급·보관·운송</td><td>6 제작·조립, 자재 관리, 보관·출하</td></tr>
+      <tr><td>IX 특수공정</td><td>7 특수공정</td></tr>
+      <tr><td>X 검사 · XI 시험 · XII 측정·시험장비 · XIV 상태 표시</td><td>8 시험·검사·교정</td></tr>
+      <tr><td>XV 부적합품</td><td>11 부적합품 / Part 21</td></tr>
+      <tr><td>XVI 시정조치</td><td>13 시정조치</td></tr>
+      <tr><td>XVII QA 기록</td><td>16 기록</td></tr>
+      <tr><td>XVIII 감사</td><td>12 내부감사</td></tr>
+      <tr><td>(현장 작업 전반)</td><td>15 현장 서비스</td></tr>
+    </tbody>
+  </table>
+  <div class="warn"><b>NUPIC 지적 통계(2023~2026)</b>: 공급사 지적 204건 중 <b>상용품 품질검증(CGD) 관련이 약 40%</b>, 시정조치 관련이 약 16%입니다(2026년 6월 NUPIC 벤더 컨퍼런스 발표). 즉 기준 VII과 XVI이 실제 감사의 핵심입니다.</div>
+</section>
+
+<section id="cases">
+  <h2><span class="k">05</span>기준별 실제 지적 사례</h2>
+  <p class="note">NRC 벤더 검사보고서(2019~2020)와 2026 NUPIC 벤더 컨퍼런스 NRC 발표에서 정리했습니다. NON은 공급사에 대한 부적합 통보, NCV는 사업자에 대한 비인용 위반입니다.</p>
+  <table>
+    <thead><tr><th>기준</th><th>대상</th><th>지적 내용(요약)</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">III</td><td>Fisher Controls · Rosemount Nuclear Instruments</td><td><span class="tag">NON</span> 설계 관리 프로그램의 이행 미흡</td></tr>
+      <tr><td class="mono">V · XII</td><td>HydroAire Services</td><td><span class="tag">NON</span> 지침·절차와 측정장비 관리 관련</td></tr>
+      <tr><td class="mono">VII</td><td>Curtiss-Wright Enertech</td><td><span class="tag">NON</span> 단조품 공급사를 ASME 재료업체(MO)로 적절히 자격부여하지 않음</td></tr>
+      <tr><td class="mono">VII</td><td>Monticello 원전(사업자)</td><td>NCV: 개스킷 상용품 품질검증 시 핵심 특성을 만족한다는 객관적 증거(CGS) 미확보</td></tr>
+      <tr><td class="mono">IX</td><td>ENSA(MDEP 다국적 검사) · Westinghouse 핵연료공장</td><td><span class="tag">NON</span> 특수공정(침투탐상 등) 관리 미흡</td></tr>
+      <tr><td class="mono">XI</td><td>GE Vernova Hitachi (2026)</td><td>수압시험 후 플러그 용접부 누설 확인과 세척수 전도도 확인 누락</td></tr>
+      <tr><td class="mono">XV</td><td>GE Vernova Hitachi (2026)</td><td>처리되지 않은 NCR 186건, 일부 품목은 위치나 식별을 확인할 수 없음</td></tr>
+      <tr><td class="mono">XVI</td><td>L&amp;S Machine · Arcos Industries</td><td><span class="tag">NON</span> 품질 저해 조건(CAQ)을 신속하게 식별·시정하지 않음</td></tr>
+      <tr><td class="mono">XVI</td><td>Element Materials Technology · Operation Technology (2026)</td><td>시정조치 적시성 지표 부재, 효과성 미검증, 시정조치 프로그램 자체가 문서화되지 않음</td></tr>
+    </tbody>
+  </table>
+  <div class="key"><b>공통 패턴</b>: 절차서가 <b>있는지</b>보다, 절차대로 <b>실제로 했는지</b>와 그 <b>증거(기록)</b>가 남아 있는지에서 지적이 나옵니다. 시정조치는 "종결했는가"가 아니라 "재발을 막았는가"를 봅니다.</div>
+</section>
+
+<section id="terms">
+  <h2><span class="k">06</span>헷갈리는 개념</h2>
+  <table>
+    <thead><tr><th>개념</th><th>구분</th></tr></thead>
+    <tbody>
+      <tr><td>CAQ / SCAQ</td><td>품질 저해 조건(Condition Adverse to Quality)은 신속히 식별·시정합니다. 그중 <b>중대한 것(Significant CAQ)</b>은 원인을 규명하고 재발 방지 조치까지 해야 합니다(기준 XVI).</td></tr>
+      <tr><td>NOV / NON</td><td>NOV(위반 통보)는 NRC 규정 자체를 위반한 경우로, 주로 인허가 보유자나 Part 21 대상자에게 발행됩니다. NON(부적합 통보)은 공급사가 계약으로 넘겨받은 부록 B 요건을 지키지 못한 경우입니다.</td></tr>
+      <tr><td>Finding / Deficiency</td><td>NUPIC 감사 용어입니다. Finding은 제품 기능에 영향을 줄 수 있는 결함, Deficiency는 기능 영향은 없는 QA 절차 불이행으로 공급사 CAP에서 처리합니다(NEI EB 16-28b).</td></tr>
+      <tr><td>Safety-related / Basic component</td><td>부록 B는 "안전 관련" SSC에 적용됩니다. Part 21은 이를 "기본 부품(basic component)"이라 부르며, 결함 보고 의무의 대상이 됩니다.</td></tr>
+      <tr><td>상용품(CGI)과 품질검증(Dedication)</td><td>부록 B 프로그램 없이 만든 일반 상용품을 안전 관련 용도로 쓰려면, 핵심 특성을 검증해 기본 부품으로 전환해야 합니다(Part 21 정의, EPRI NP-5652/TR-3002002982). 기준 III·VII과 직결됩니다.</td></tr>
+      <tr><td>독립성</td><td>기준 I(QA 조직의 독립성), III(설계 검증자는 원설계자가 아님), X(검사자는 작업자가 아님), XVIII(감사자는 해당 업무 책임자가 아님) 등 여러 기준에 반복해서 나옵니다.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="refs">
+  <h2><span class="k">07</span>관련 규정과 원문</h2>
+  <ul>
+    <li>원문(eCFR): <a href="https://www.ecfr.gov/current/title-10/chapter-I/part-50/appendix-Appendix%20B%20to%20Part%2050" target="_blank" rel="noopener">Appendix B to Part 50</a></li>
+    <li>NRC 원문 페이지: <a href="https://www.nrc.gov/reading-rm/doc-collections/cfr/part050/part050-appb.html" target="_blank" rel="noopener">nrc.gov · Part 50 Appendix B</a></li>
+    <li><b>10 CFR Part 21</b> — 결함 및 불이행 보고. 부록 B의 기준 XV·XVI와 함께 운영됩니다.</li>
+    <li><b>ASME NQA-1</b> — 부록 B를 구현하는 업계 표준 (Regulatory Guide 1.28로 NRC 승인).</li>
+    <li><b>ASME Section III NCA-4000</b> — ASME 코드 품목의 품질보증 요건.</li>
+    <li><b>NRC IP 43002 · 43004 · 36100</b> — 벤더 검사, CGD 검사, Part 21 검사 절차.</li>
+    <li>같은 사이트의 <a href="nupic.html">NUPIC 개념 설명</a> 노트 — 부록 B가 공급사 감사로 어떻게 이어지는지.</li>
+  </ul>
+</section>
+
+</main>
+<footer>Study Notes · 10 CFR 50 부록 B 요약 · 공식 번역이 아니며 원문이 우선합니다</footer>
+
+<script>
+const C = [
+  ["I","Organization","조직","plan",
+   "QA 업무를 하는 사람과 조직의 권한과 책임을 문서로 정합니다. QA 담당자는 문제를 찾아내고, 해결책을 제안하고, 이행을 확인할 수 있을 만큼 충분한 권한과 독립성을 가져야 하며, 원가나 일정 압박에서 독립적이어야 합니다. 업무는 위임할 수 있어도 책임은 사업자에게 남습니다.",
+   "조직도, 직무기술서, QA 매뉴얼의 권한 조항, QA 책임자의 보고 라인",
+   "QA 책임자가 생산·영업 책임자에게 보고해 독립성이 약함, 조직 변경 후 매뉴얼을 개정하지 않음"],
+  ["II","Quality Assurance Program","품질보증 프로그램","plan",
+   "가능한 한 이른 시점에 문서화된 QA 프로그램을 수립하고, 적용 대상 SSC를 명확히 합니다. 품질에 영향을 주는 업무를 하는 인원에게 교육·훈련을 해서 숙련도를 유지하고, 경영진은 프로그램의 상태와 적정성을 정기적으로 검토합니다.",
+   "QA 매뉴얼과 절차서 목록, 교육 계획과 이수 기록, 경영 검토 회의록",
+   "교육 기록 누락이나 자격 만료, 경영 검토를 형식적으로만 실시"],
+  ["III","Design Control","설계 관리","plan",
+   "설계 기준(design basis)을 시방서·도면·절차서로 정확히 옮기고, 재료·부품·공정의 적합성을 검토합니다. 설계 검토, 대체 계산, 검증 시험 중 한 방법으로 설계를 검증하며, 검증자는 원설계자가 아니어야 합니다. 설계 인터페이스와 설계 변경도 같은 수준으로 관리합니다.",
+   "설계 입력 목록, 설계 검증 기록, 설계 변경 이력, 계산서, 설계용 소프트웨어 검증 기록",
+   "설계 입력이 도면에 반영되지 않음, 독립 검증 누락, 비안전 부품으로 분류한 근거(고장모드 분석) 없음"],
+  ["IV","Procurement Document Control","구매문서 관리","plan",
+   "구매문서에 규제 요건, 설계 기준, 품질 요건을 포함하고, 필요하면 공급사에게도 부록 B에 맞는 QA 프로그램을 요구합니다. 구매문서와 그 변경은 검토·승인합니다.",
+   "구매주문서(PO)의 기술·품질 조항, Part 21 적용 문구, 하위 공급사에 대한 요건 전달 기록",
+   "PO에 Part 21 적용 여부를 누락, 고객 요건을 하위 공급사 PO로 넘기지 않음"],
+  ["V","Instructions, Procedures, and Drawings","지침·절차·도면","do",
+   "품질에 영향을 주는 업무는 상황에 맞는 문서화된 지침·절차·도면에 따라 수행합니다. 이 문서에는 정량적이거나 정성적인 합격 기준이 들어 있어야 합니다.",
+   "작업지시서, 트래블러, 절차서의 합격 기준, 현장 작업과 절차의 일치 여부",
+   "절차와 다르게 작업함, 합격 기준이 없는 절차서"],
+  ["VI","Document Control","문서 관리","do",
+   "지침·절차·도면의 발행과 변경을 권한 있는 사람이 검토·승인하고, 작업 장소에 최신본이 배포되어 사용되도록 관리합니다. 변경은 원래 검토한 조직이 다시 검토합니다.",
+   "문서 대장, 개정 이력, 현장에 비치된 문서의 개정번호",
+   "현장에서 구버전 도면 사용, 승인 없이 수기로 수정"],
+  ["VII","Control of Purchased Material, Equipment, and Services","구매품·서비스 관리","do",
+   "구매한 재료·장비·서비스가 구매문서에 맞는지 보증합니다. 방법은 공급사 평가와 선정, 공급사가 제출하는 품질의 객관적 증거, 공급처 검사, 인수 검사 등입니다. 증거 문서는 설치나 사용 전에 원전 현장에 있어야 하고, 공급사 관리의 효과는 품목의 중요도와 복잡도에 맞는 주기로 평가합니다.",
+   "승인 공급사 목록(ASL), 공급사 감사·조사 보고서, 인수검사 기록, 상용품 품질검증(CGD) 패키지",
+   "공급사 감사 자격·범위 부적절, CGD 핵심 특성 누락, CGS 보고서를 보존하지 않음 — NUPIC 지적의 최다 영역"],
+  ["VIII","Identification and Control of Materials, Parts, and Components","재료·부품 식별 관리","do",
+   "히트번호, 부품번호, 일련번호 등으로 품목을 식별하고, 품목 자체나 추적 가능한 기록으로 식별을 유지해 잘못되거나 결함 있는 품목을 쓰지 않도록 합니다.",
+   "재료 인증서(CMTR)와 히트번호 대조, 이관 표시(marking transfer) 기록",
+   "식별 표시가 지워졌거나 판독 불가, 절단 후 표시 이관 누락"],
+  ["IX","Control of Special Processes","특수공정 관리","do",
+   "용접, 열처리, 비파괴검사 같은 특수공정은 코드·표준에 따라 검증된 절차와 자격을 갖춘 인원이 수행합니다.",
+   "WPS/PQR, 용접사 자격(WPQ), NDE 요원 자격(SNT-TC-1A, CP-189), 열처리 기록",
+   "절차 변수 범위 이탈, 자격이 만료된 요원이 수행"],
+  ["X","Inspection","검사","check",
+   "업무를 수행한 사람이 아닌 다른 사람이 검사해 요건 충족을 확인합니다. 직접 검사가 불가능하면 공정을 감시하는 간접 관리를 하고, 필요하면 작업을 멈추고 확인하는 입회점(hold point)을 둡니다.",
+   "검사 계획서, 입회점 서명 기록, 검사자 자격",
+   "자기 작업을 자기가 검사, 입회점을 건너뜀"],
+  ["XI","Test Control","시험 관리","check",
+   "SSC가 제 기능을 한다는 것을 보여주는 시험 프로그램을 운영합니다. 시험 절차서에는 요건, 합격 한계, 선행 조건, 계측 장비, 환경 조건을 넣고, 결과를 문서화하고 평가합니다.",
+   "시험 절차서와 시험 보고서, 합격 기준 대비 평가 기록",
+   "시험 후 확인 항목 누락(예: 수압시험 후 누설 검사), 결과 평가 없이 서명"],
+  ["XII","Control of Measuring and Test Equipment","측정·시험장비 관리","check",
+   "측정 공구, 게이지, 계측기를 관리하고 정해진 주기로 교정·조정해 정확도를 유지합니다. 교정 기한을 넘긴 장비가 발견되면 그 장비로 측정한 결과의 유효성을 평가해야 합니다.",
+   "M&TE 대장, 교정 성적서(ISO/IEC 17025, 인정기관 표시), 교정 불합격 시 영향 평가",
+   "교정 성적서에 PO 요건 충족 인증이 없음, 교정 불합격 장비의 과거 측정 영향 평가 누락"],
+  ["XIII","Handling, Storage, and Shipping","취급·보관·운송","do",
+   "손상이나 열화를 막도록 취급·보관·운송·세척·포장·보존을 지침에 따라 관리하고, 필요하면 불활성 가스, 습도, 온도 같은 특별 보호 환경을 유지합니다.",
+   "보관 구역 등급 관리, 포장 사양, 보존 처리 기록",
+   "보관 등급 미준수, 개방된 노즐의 보호 조치 누락"],
+  ["XIV","Inspection, Test, and Operating Status","검사·시험·운전 상태 표시","check",
+   "태그, 라벨, 스탬프, 라우팅 카드 등으로 품목의 검사·시험 상태를 표시해 필요한 검사를 건너뛰지 않게 합니다. 부적합이거나 작동하지 않는 품목의 상태도 표시합니다.",
+   "상태 태그, 트래블러 서명 순서",
+   "검사 전 품목이 다음 공정으로 넘어감"],
+  ["XV","Nonconforming Materials, Parts, or Components","부적합품 관리","act",
+   "요건에 맞지 않는 품목이 실수로 쓰이거나 설치되지 않도록 식별, 문서화, 격리, 처리(불합격, 수리, 재작업, 그대로 사용)하고 관련 조직에 통보합니다. 수리나 그대로 사용 판정은 절차에 따라 검토·승인합니다.",
+   "부적합 보고서(NCR), 격리 구역, 처리 판정과 승인 기록, Part 21 평가 연계",
+   "오래 방치된 미처리 NCR, 격리하지 않은 부적합품, Part 21 평가 누락"],
+  ["XVI","Corrective Action","시정조치","act",
+   "고장, 오작동, 결함, 편차, 부적합 같은 품질 저해 조건(CAQ)을 신속히 찾아 시정합니다. 중대한 조건이면 원인을 규명하고 재발 방지 조치를 하며, 조건과 원인과 조치를 문서화해 적절한 경영진에게 보고합니다.",
+   "CAR·CR 대장, 원인 분석, 재발 방지 조치, 효과성 검증 기록, 적시성 지표",
+   "종결은 했지만 효과성 미검증, 장기 미결, 중대성 분류 기준 부재 — NRC 지적 최다 기준"],
+  ["XVII","Quality Assurance Records","품질보증 기록","act",
+   "품질 활동의 증거가 되는 기록을 충분히 유지합니다. 운전일지, 검토·검사·시험·감사 결과, 작업 감시, 재료 분석, 인원·절차·장비의 자격 기록 등이 해당하며, 식별과 검색이 가능해야 하고 규정된 기간 동안 보존해야 합니다.",
+   "기록 보존 목록과 보존 기간, 보관 환경(이중 보관, 내화), 전자기록 관리",
+   "CGD 기록(CGS 보고서)을 영구 기록으로 관리하지 않음, 최종 기록 패키지가 납품 품목의 실제와 불일치"],
+  ["XVIII","Audits","감사","check",
+   "계획된 정기 감사로 QA 프로그램의 준수 여부와 효과를 확인합니다. 감사는 서면 절차나 체크리스트에 따라, 감사 대상 업무에 직접 책임이 없는 훈련된 인원이 합니다. 결과는 해당 분야 경영진이 검토하고, 미흡한 분야는 재감사를 포함해 후속 조치합니다.",
+   "내부감사 계획과 보고서, 감사자 자격(NQA-1), 후속 조치 기록, 공급사 외부감사 기록",
+   "감사 범위가 일부 기준을 누락, 감사자 독립성 결여, 지적의 후속 확인 없음"]
+];
+const G = {plan:"계획·조직",do:"실행·관리",check:"검증·확인",act:"개선·기록"};
+const box = document.getElementById("crit");
+for (const [no,en,ko,g,req,ev,ng] of C) {
+  const d = document.createElement("details");
+  d.className = "cr"; d.dataset.g = g; d.id = "c" + no;
+  d.innerHTML = `<summary><span class="no">${no}</span><span class="nm"><b>${ko}</b><span>${en}</span></span><span class="gp ${g}">${G[g]}</span></summary>
+  <div class="body"><div class="row"><span>REQUIREMENT</span><div>${req}</div></div>
+  <div class="row"><span>EVIDENCE</span><div>${ev}</div></div>
+  <div class="row"><span>COMMON GAP</span><div>${ng}</div></div></div>`;
+  box.append(d);
+}
+document.getElementById("filters").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll("#filters button").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll("details.cr").forEach(d => d.style.display = (b.dataset.g === "all" || d.dataset.g === b.dataset.g) ? "" : "none");
+});
+</script>
+</body>
+</html>
