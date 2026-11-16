@@ -36,6 +36,12 @@
           "path": "reports/ResearchNotes/appendix_b.html",
           "date": "2026-11-10T00:00:00+09:00",
           "summary": "원전 품질보증 18개 기준(Criterion I~XVIII)의 핵심 요구사항, 감사 증거, 흔한 지적. NUPIC 체크리스트 대응표와 NRC 벤더 검사 지적 사례."
+        },
+        {
+          "name": "NUPIC 감사 근거 문서",
+          "path": "reports/NUPIC/audit_basis.html",
+          "date": "2026-11-16T00:00:00+09:00",
+          "summary": "NUPIC 체크리스트가 부록 B 외에 근거로 삼는 문서: Part 21, NQA-1, ANSI N45.2, ASME III·IX·XI, SNT-TC-1A·CP-189, EPRI 3002002982, NEI 14-05-A, ISO/IEC 17025. 섹션별 추가 근거와 References 읽는 법."
         }
       ],
       "groups": [
